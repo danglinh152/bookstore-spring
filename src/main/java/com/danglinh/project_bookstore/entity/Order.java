@@ -8,11 +8,12 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "order_id")
+    private int orderId;
 
     @Column(name = "date")
     private Date date;
@@ -35,15 +36,38 @@ public class Order {
     @Column(name = "total")
     private double total;
 
-    @Column(name = "listOfOrderdetails")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
     private List<Orderdetails> listOfOrderdetails;
 
-    @Column(name = "user")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "payment")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
+    @JoinColumn(name = "payment_id", nullable = false)
     private Payment payment;
 
-    @Column(name = "delivery")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
+    @JoinColumn(name = "delivery_id", nullable = false)
     private Delivery delivery;
 }

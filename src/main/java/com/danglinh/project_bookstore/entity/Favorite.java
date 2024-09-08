@@ -9,11 +9,26 @@ import lombok.Data;
 public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "favorite_id")
+    private int favoriteId;
 
-    @Column(name = "user")
+    @ManyToOne(
+            fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH}
+    )
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "book")
+    @ManyToOne(
+            fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH}
+    )
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 }

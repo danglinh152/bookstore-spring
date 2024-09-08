@@ -10,9 +10,10 @@ import lombok.Generated;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "image_id")
+    private int imageId;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 256)
     private String name;
 
     @Column(name = "is_icon")
@@ -22,8 +23,16 @@ public class Image {
     private String path; // if path is null => data
 
     @Column(name = "data")
+    @Lob
     private String data; //
 
-    @Column(name = "book")
+    @ManyToOne(
+            fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH}
+    )
+    @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 }

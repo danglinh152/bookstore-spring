@@ -11,7 +11,8 @@ import lombok.Data;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "payment_id")
+    private int paymentId;
 
     @Column(name = "name")
     private String name;
@@ -22,6 +23,11 @@ public class Payment {
     @Column(name = "payment_cost")
     private double paymentCost;
 
-    @Column(name = "listOfOrder")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
     private List<Order> listOfOrder;
 }

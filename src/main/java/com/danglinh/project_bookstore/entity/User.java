@@ -11,7 +11,8 @@ import lombok.Data;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "user_id")
+    private int userId;
 
     @Column(name = "first_name")
     private String firstName;
@@ -22,7 +23,7 @@ public class User {
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "password")
+    @Column(name = "password", length = 512)
     private String password;
 
     @Column(name = "gender")
@@ -40,15 +41,27 @@ public class User {
     @Column(name = "shipping_address")
     private String shippingAddress;
 
-    @Column(name = "listOfFeedback")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Feedback> listOfFeedback;
 
-    @Column(name = "listOfFarvorite")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Favorite> listOfFarvorite;
 
-    @Column(name = "listOfRole")
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
+    @JoinTable(name = "user_role",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private List<Role> listOfRole;
-
-    @Column(name = "listOfOrder")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
     private List<Order> listOfOrder;
 }

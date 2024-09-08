@@ -9,17 +9,32 @@ import lombok.Data;
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "feedback_id")
     private long feedbackId;
 
-    @Column(name = "feedback")
+    @Column(name = "feedback", columnDefinition = "text")
     private String feedback;
-
-    @Column(name = "book")
-    private Book book;
 
     @Column(name = "rate")
     private float rate;
 
-    @Column(name = "user")
+    @ManyToOne(
+            fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH}
+    )
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
+
+    @ManyToOne(
+            fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH}
+    )
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

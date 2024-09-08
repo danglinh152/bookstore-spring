@@ -12,18 +12,19 @@ import java.util.List;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "book_id")
+    private int bookId;
 
-    @Column(name = "title")
+    @Column(name = "title", length = 256)
     private String title;
 
-    @Column(name = "author")
+    @Column(name = "author", length = 512)
     private String author;
 
-    @Column(name = "isbn")
+    @Column(name = "isbn", length = 256)
     private String isbn;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "text")
     private String description;
 
     @Column(name = "list_price")
@@ -35,25 +36,35 @@ public class Book {
     @Column(name = "quantity")
     private int quantity;
 
-    @ManyToMany(mappedBy = "listOfBook")
+    @Column(name = "avg_rate")
+    private double avgRate;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
+    @JoinTable(name = "book_genre",
+            joinColumns = {@JoinColumn(name = "book_id")},
+            inverseJoinColumns = {@JoinColumn(name = "genre_id")})
     private List<Genre> listOfGenre;
 
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id")
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Image> listOfImage;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedback_id")
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Feedback> listOfFeedback;
 
-    @ManyToMany
-    @JoinTable(
-            name = "book_course",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "orderdetail_id"))
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
     private List<Orderdetails> listOfOrderdetails;
 
-    @Column(name = "title")
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Favorite> listOfFavorite;
 }

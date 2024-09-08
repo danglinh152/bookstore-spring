@@ -9,10 +9,8 @@ import lombok.Data;
 public class Orderdetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name = "book")
-    private Book book;
+    @Column(name = "orderdetails_id")
+    private long orderDetailsId;
 
     @Column(name = "quantity")
     private int quantity;
@@ -20,6 +18,22 @@ public class Orderdetails {
     @Column(name = "price")
     private double price;
 
-    @Column(name = "order")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
+
+    @ManyToOne(
+            fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH}
+    )
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 }

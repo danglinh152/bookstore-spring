@@ -2,7 +2,6 @@ package com.danglinh.project_bookstore.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Generated;
 
 import java.util.List;
 
@@ -12,7 +11,8 @@ import java.util.List;
 public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "delivery_id")
+    private int deliveryId;
 
     @Column(name = "name")
     private String name;
@@ -23,6 +23,11 @@ public class Delivery {
     @Column(name = "shipping_cost")
     private double shippingCost;
 
-    @Column(name = "listOfOrder")
+    @OneToMany(mappedBy = "delivery", fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.DETACH,
+            CascadeType.REFRESH
+    })
     private List<Order> listOfOrder;
 }

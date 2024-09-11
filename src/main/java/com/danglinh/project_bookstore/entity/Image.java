@@ -22,7 +22,7 @@ public class Image {
     @Column(name = "path")
     private String path; // if path is null => data
 
-    @Column(name = "data")
+    @Column(name = "data", columnDefinition = "LONGTEXT")
     @Lob
     private String data; //
 

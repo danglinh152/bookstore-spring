@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 @Component
 public class RestConfig implements RepositoryRestConfigurer {
-    private String url = "http://localhost:3030";
+    private String url = "http://localhost:3000";
     @Autowired
     private EntityManager entityManager;
 

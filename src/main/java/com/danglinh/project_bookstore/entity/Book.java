@@ -27,6 +27,12 @@ public class Book {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
+    @Column(name = "description_details", columnDefinition = "LONGTEXT  ")
+    private String descriptionDetails;
+
+    @Column(name = "info_details", columnDefinition = "LONGTEXT")
+    private String infoDetails;
+
     @Column(name = "list_price")
     private double listPrice; // giá niêm yết
 

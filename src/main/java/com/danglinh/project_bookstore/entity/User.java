@@ -14,6 +14,10 @@ public class User {
     @Column(name = "user_id")
     private int userId;
 
+    @Column(name = "avatar", columnDefinition = "LONGTEXT")
+    @Lob
+    private String avatar; //
+
     @Column(name = "first_name")
     private String firstName;
 

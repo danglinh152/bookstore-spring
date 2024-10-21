@@ -19,7 +19,7 @@ public class Feedback {
     private float rate;
 
     @ManyToOne(
-            fetch = FetchType.LAZY, cascade = {
+            fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.DETACH,
@@ -29,7 +29,7 @@ public class Feedback {
     private Book book;
 
     @ManyToOne(
-            fetch = FetchType.LAZY, cascade = {
+            fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.DETACH,

@@ -24,14 +24,14 @@ public class RestConfig implements RepositoryRestConfigurer {
                 .allowedOrigins(url)
                 .allowedMethods("GET", "POST", "PUT", "DELETE");
 
-        HttpMethod[] blockedMethod = {
-                HttpMethod.POST,
-                HttpMethod.PUT,
-                HttpMethod.PATCH,
-                HttpMethod.DELETE
-        };
-
-        disableHttpMethods(User.class, config, blockedMethod);
+//        HttpMethod[] blockedMethod = {
+//                HttpMethod.POST,
+//                HttpMethod.PUT,
+//                HttpMethod.PATCH,
+//                HttpMethod.DELETE
+//        };
+//
+//        disableHttpMethods(User.class, config, blockedMethod);
     }
 
     private void disableHttpMethods(Class c, RepositoryRestConfiguration config, HttpMethod[] blockedMethod) {

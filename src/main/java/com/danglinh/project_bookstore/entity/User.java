@@ -45,13 +45,19 @@ public class User {
     @Column(name = "shipping_address")
     private String shippingAddress;
 
+    @Column(name = "activate")
+    private Boolean activate;
+
+    @Column(name = "activate_code")
+    private String activateCode;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Feedback> listOfFeedback;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Favorite> listOfFarvorite;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.DETACH,

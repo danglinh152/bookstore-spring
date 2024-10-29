@@ -25,9 +25,6 @@ public class AccountServiceImpl implements AccountService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
     private JwtServiceImpl jwtService;
 
     @Autowired

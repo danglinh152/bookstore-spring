@@ -3,7 +3,7 @@ package com.danglinh.project_bookstore.security;
 import java.util.ArrayList;
 
 public class Endpoints {
-    public static final String front_end_port = "http://localhost:3000";
+    public static final String front_end_port = "http://localhost:3000/";
     public static final String[] PUBLIC_GET_ENDPOINTS = {
             "/books/**",
             "/feedbacks/**",
@@ -14,7 +14,8 @@ public class Endpoints {
 
     public static final String[] PUBLIC_POST_ENDPOINTS = {
             "/account/register",
-            "/account/login"
+            "/account/login",
+            "/feedback/givefeedback"
     };
 
     public static final String[] ADMIN_GET_ENDPOINTS = {

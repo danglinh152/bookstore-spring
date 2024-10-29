@@ -15,4 +15,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     Page<Book> findByListOfGenre_GenreId(@RequestParam("id") int genreId, Pageable pageable);
 
     Page<Book> findByTitleContainingAndListOfGenre_GenreId(@RequestParam("title") String title, @RequestParam("id") int genreId, Pageable pageable);
+
+    public Book findById(int id);
 }

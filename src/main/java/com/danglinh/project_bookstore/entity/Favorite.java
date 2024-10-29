@@ -1,5 +1,6 @@
 package com.danglinh.project_bookstore.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,10 +21,11 @@ public class Favorite {
             CascadeType.REFRESH}
     )
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @ManyToOne(
-            fetch = FetchType.LAZY, cascade = {
+            fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.DETACH,

@@ -4,9 +4,13 @@ import com.danglinh.project_bookstore.DAO.BookRepository;
 import com.danglinh.project_bookstore.DAO.FavoriteRepository;
 import com.danglinh.project_bookstore.DAO.FeedbackRepository;
 import com.danglinh.project_bookstore.DAO.UserRepository;
+import com.danglinh.project_bookstore.DTO.BookDTO;
 import com.danglinh.project_bookstore.entity.*;
 import com.danglinh.project_bookstore.security.FavoriteRequest;
 import com.danglinh.project_bookstore.security.FeedbackRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +25,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Autowired
     private BookRepository bookRepository;
@@ -83,7 +90,6 @@ public class BookServiceImpl implements BookService {
     public ResponseEntity<?> isFavorite(int userId) {
         try {
             // Log the incoming request data
-            System.out.println("Received feedback request: " + userId);
 
             User user = userRepository.findById(userId);
             if (user == null) {
@@ -95,24 +101,25 @@ public class BookServiceImpl implements BookService {
                 favorites = new ArrayList<>(); // Handle null case
             }
 
-            // Create a list to hold bookIds
-            List<Integer> favoriteBookIds = new ArrayList<>();
+            // Create a list to hold DTO objects
+            List<BookDTO> favoriteBookDTOs = new ArrayList<>();
 
-            // Extract bookIds manually
+            // Populate the list with books from favorites
             for (Favorite favorite : favorites) {
-                // Assuming bookId is a public field in Favorite
-                favoriteBookIds.add(favorite.getBook().getBookId()); // Change 'bookId' to the actual field name if different
+                Book book = favorite.getBook();
+                if (book != null) {
+                    favoriteBookDTOs.add(new BookDTO(book.getBookId(), book.getTitle()));
+                }
             }
 
-            // Create a response object containing only the list of bookIds
+
             Map<String, Object> response = new HashMap<>();
-            response.put("favoriteBookIds", favoriteBookIds);
+            response.put("favoriteBooks", favoriteBookDTOs); // Use DTOs in response
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             // Log the exception for debugging
-            System.out.println("Error occurred: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "An error occurred"));
         }
     }
@@ -158,6 +165,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> RemoveFavorite(FavoriteRequest favoriteRequest) {
         try {
             String token = favoriteRequest.getToken();
@@ -178,9 +186,27 @@ public class BookServiceImpl implements BookService {
 
 
                 // Save feedback to the database (assuming there's a save method)
-                favoriteRepository.delete(favoriteRepository.findByUserAndBook(user, book));
+                try {
+                    Favorite favorite = favoriteRepository.findByUserAndBook(user, book);
+                    List<Favorite> listFavorite = user.getListOfFavorite(); // Use List instead of ArrayList
+                    listFavorite.remove(favorite);
+                    user.setListOfFavorite(listFavorite);
 
-                return ResponseEntity.ok(new Message("Successfully deleted favorite"));
+                    if (favorite != null) {
+                        favoriteRepository.delete(favorite);
+                        entityManager.flush();
+//                        entityManager.createQuery("DELETE FROM Favorite f WHERE f.user = :user AND f.book = :book")
+//                                .setParameter("user", user)
+//                                .setParameter("book", book)
+//                                .executeUpdate();
+                        return ResponseEntity.ok(new Message("Successfully deleted favorite"));
+                    } else {
+                        return ResponseEntity.badRequest().body(new Message("Favorite not found"));
+                    }
+
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body(new Message("Failed to delete favorite"));
+                }
             } else {
                 return ResponseEntity.badRequest().body(new Message("Invalid token"));
             }

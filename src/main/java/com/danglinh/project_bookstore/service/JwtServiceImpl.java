@@ -31,6 +31,7 @@ public class JwtServiceImpl implements JwtService {
         Map<String, Object> claims = new HashMap<>();
         User user = new User();
         user = userService.findByUsername(userName);
+        claims.put("userid", user.getUserId());
         claims.put("avatar", user.getAvatar());
         return createToken(claims, userName);
     }
@@ -55,7 +56,6 @@ public class JwtServiceImpl implements JwtService {
     public String extractUserNameFromJwtToken(String token) {
         return extractJwtToken(token, Claims::getSubject);
     }
-
 
 
     @Override

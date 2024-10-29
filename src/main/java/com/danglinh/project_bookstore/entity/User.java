@@ -2,6 +2,7 @@ package com.danglinh.project_bookstore.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -55,6 +56,7 @@ public class User {
     private List<Feedback> listOfFeedback;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Favorite> listOfFavorite;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {

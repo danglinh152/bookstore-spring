@@ -54,8 +54,8 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Feedback> listOfFeedback;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Favorite> listOfFarvorite;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Favorite> listOfFavorite;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,
@@ -74,4 +74,5 @@ public class User {
             CascadeType.REFRESH
     })
     private List<Order> listOfOrder;
+
 }

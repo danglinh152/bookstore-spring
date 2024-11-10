@@ -217,4 +217,14 @@ public class BookServiceImpl implements BookService {
             return ResponseEntity.badRequest().body(new Message("Failed to give feedback: " + e.getMessage()));
         }
     }
+
+    @Override
+    public ResponseEntity<?> AddBook(Book book) {
+        try {
+            bookRepository.save(book);
+            return ResponseEntity.ok(new Message("Successfully added book"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new Message("Invalid book"));
+        }
+    }
 }

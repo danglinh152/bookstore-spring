@@ -1,5 +1,6 @@
 package com.danglinh.project_bookstore.controller;
 
+import com.danglinh.project_bookstore.entity.Book;
 import com.danglinh.project_bookstore.entity.Favorite;
 import com.danglinh.project_bookstore.security.Endpoints;
 import com.danglinh.project_bookstore.security.FavoriteRequest;
@@ -43,6 +44,12 @@ public class BookController {
     @DeleteMapping("/favorite")
     public ResponseEntity<?> RemoveFavorite(@RequestBody FavoriteRequest favoriteRequest) {
         ResponseEntity<?> response = bookService.RemoveFavorite(favoriteRequest);
+        return response;
+    }
+
+    @PostMapping("/add-book")
+    public ResponseEntity<?> AddNewBook(@RequestBody Book book) {
+        ResponseEntity<?> response = bookService.AddBook(book);
         return response;
     }
 

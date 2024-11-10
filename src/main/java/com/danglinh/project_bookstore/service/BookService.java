@@ -17,5 +17,6 @@ public interface BookService {
     public ResponseEntity<?> AddFavorite(@RequestBody FavoriteRequest favoriteRequest);
 
     public ResponseEntity<?> RemoveFavorite(@RequestBody FavoriteRequest favoriteRequest);
+    public ResponseEntity<?> AddBook(@RequestBody Book book);
 
 }

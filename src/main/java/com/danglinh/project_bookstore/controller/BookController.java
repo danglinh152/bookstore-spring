@@ -1,56 +1,50 @@
 package com.danglinh.project_bookstore.controller;
 
-import com.danglinh.project_bookstore.entity.Book;
-import com.danglinh.project_bookstore.entity.Favorite;
-import com.danglinh.project_bookstore.security.Endpoints;
-import com.danglinh.project_bookstore.security.FavoriteRequest;
-import com.danglinh.project_bookstore.security.FeedbackRequest;
-import com.danglinh.project_bookstore.service.BookServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.danglinh.project_bookstore.domain.DTO.response.RestResponse;
+import com.danglinh.project_bookstore.domain.entity.Book;
+import com.danglinh.project_bookstore.service.BookService;
+import com.danglinh.project_bookstore.service.error.IdInvalidException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/book")
-@CrossOrigin(origins = Endpoints.front_end_port)
+@RequestMapping("/api")
 public class BookController {
-    private final BookServiceImpl bookService;
+    private BookService bookService;
 
-    @Autowired
-    public BookController(BookServiceImpl bookService) {
+    public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
-    @PostMapping("/feedback/givefeedback")
-    public ResponseEntity<?> AddFeedback(@RequestBody FeedbackRequest feedbackRequest) {
-        ResponseEntity<?> response = bookService.AddFeedback(feedbackRequest);
-        return response;
+    @GetMapping("/books")
+    public ResponseEntity<List<Book>> getAllBooks() {
+        return bookService.findAllBooks();
     }
 
-    @GetMapping("/favorite")
-    public ResponseEntity<?> isFavorite(@RequestParam int userid) {
-        ResponseEntity<?> response = bookService.isFavorite(userid);
-        return response;
+    @GetMapping("/books/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable int id) throws IdInvalidException {
+        if (id > 9999){
+            throw new IdInvalidException("Id more than 9999");
+        }
+        return bookService.findBookById(id);
     }
 
-    @PostMapping("/favorite")
-    public ResponseEntity<?> AddFavorite(@RequestBody FavoriteRequest favoriteRequest) {
-        ResponseEntity<?> response = bookService.AddFavorite(favoriteRequest);
-        return response;
+    @PostMapping("/books")
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+        return bookService.addBook(book);
     }
 
-    @DeleteMapping("/favorite")
-    public ResponseEntity<?> RemoveFavorite(@RequestBody FavoriteRequest favoriteRequest) {
-        ResponseEntity<?> response = bookService.RemoveFavorite(favoriteRequest);
-        return response;
+    @PutMapping("/books")
+    public ResponseEntity<Book> updateBook(@RequestBody Book book) {
+        return bookService.updateBook(book);
     }
 
-    @PostMapping("/add-book")
-    public ResponseEntity<?> AddNewBook(@RequestBody Book book) {
-        ResponseEntity<?> response = bookService.AddBook(book);
-        return response;
+    @DeleteMapping("/books/{id}")
+    public ResponseEntity<String> deleteBook(@PathVariable int id) {
+        return bookService.deleteBook(id);
     }
 
 }

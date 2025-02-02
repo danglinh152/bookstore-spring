@@ -1,6 +1,6 @@
 package com.danglinh.project_bookstore;
 
-import com.danglinh.project_bookstore.entity.Book;
+import com.danglinh.project_bookstore.domain.entity.Book;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

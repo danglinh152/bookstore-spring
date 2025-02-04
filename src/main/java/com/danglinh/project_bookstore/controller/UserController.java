@@ -3,7 +3,7 @@ package com.danglinh.project_bookstore.controller;
 
 import com.danglinh.project_bookstore.domain.entity.User;
 import com.danglinh.project_bookstore.service.UserService;
-import com.danglinh.project_bookstore.service.error.IdInvalidException;
+import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

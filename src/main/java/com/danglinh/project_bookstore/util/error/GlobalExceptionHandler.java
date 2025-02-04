@@ -1,4 +1,4 @@
-package com.danglinh.project_bookstore.service.error;
+package com.danglinh.project_bookstore.util.error;
 
 import com.danglinh.project_bookstore.domain.DTO.response.RestResponse;
 import org.springframework.http.HttpStatusCode;

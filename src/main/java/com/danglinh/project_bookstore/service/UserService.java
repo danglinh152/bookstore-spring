@@ -3,7 +3,7 @@ package com.danglinh.project_bookstore.service;
 
 import com.danglinh.project_bookstore.domain.entity.User;
 import com.danglinh.project_bookstore.repository.UserRepository;
-import com.danglinh.project_bookstore.service.error.IdInvalidException;
+import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,5 +51,9 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User deleted successfully");
         }
         return null;
+    }
+
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

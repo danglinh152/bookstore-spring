@@ -1,4 +1,4 @@
-package com.danglinh.project_bookstore.service.error;
+package com.danglinh.project_bookstore.util.error;
 
 
 public class IdInvalidException extends Exception {

@@ -30,9 +30,16 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType("application/json;charset=UTF-8");
 
         RestResponse<Object> re = new RestResponse<>();
-        re.setError(authException.getCause().getMessage());
+
+        if (authException.getCause() == null) {
+            re.setError(authException.getMessage());
+            re.setMessage("Chua truyen token");
+        } else {
+            re.setError(authException.getCause().getMessage());
+            re.setMessage("Token khong hop le");
+        }
+
         re.setStatusCode(HttpStatus.UNAUTHORIZED.value());
-        re.setMessage("Token khong hop le");
 
         objectMapper.writeValue(response.getWriter(), re);
     }

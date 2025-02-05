@@ -1,6 +1,7 @@
 package com.danglinh.project_bookstore.domain.entity;
 
 import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -16,7 +17,7 @@ public class Order {
     private int orderId;
 
     @Column(name = "date")
-    private Date date;
+    private Instant date;
 
     @Column(name = "buying_address")
     private String buyingAddress;
@@ -35,6 +36,18 @@ public class Order {
 
     @Column(name = "total")
     private double total;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,

@@ -1,5 +1,6 @@
 package com.danglinh.project_bookstore.domain.entity;
 
+import java.time.Instant;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -16,6 +17,18 @@ public class Role {
 
     @Column(name = "role_name")
     private String roleName;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,

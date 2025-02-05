@@ -3,6 +3,7 @@ package com.danglinh.project_bookstore.domain.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 
 
@@ -44,6 +45,18 @@ public class Book {
 
     @Column(name = "avg_rate")
     private double avgRate;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,

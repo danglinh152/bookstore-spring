@@ -2,6 +2,7 @@ package com.danglinh.project_bookstore.domain.entity;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.util.List;
 
 import lombok.Data;
@@ -17,6 +18,18 @@ public class Genre {
 
     @Column(name = "name", length = 256)
     private String name;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,

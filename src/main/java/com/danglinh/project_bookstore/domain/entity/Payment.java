@@ -1,5 +1,6 @@
 package com.danglinh.project_bookstore.domain.entity;
 
+import java.time.Instant;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -22,6 +23,18 @@ public class Payment {
 
     @Column(name = "payment_cost")
     private double paymentCost;
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,

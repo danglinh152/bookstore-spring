@@ -17,39 +17,37 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public ResponseEntity<Book> findBookById(int id) {
+    public Book findBookById(int id) {
         Optional<Book> book = bookRepository.findById(id);
         if (book.isPresent()) {
-            return ResponseEntity.ok(book.get());
+            return book.get();
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
-    public ResponseEntity<List<Book>> findAllBooks() {
+    public List<Book> findAllBooks() {
         List<Book> books = bookRepository.findAll();
         if (books.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return null;
         }
-        return ResponseEntity.ok(books);
+        return books;
     }
 
-    public ResponseEntity<Book> addBook(Book book) {
-        bookRepository.save(book);
-        return ResponseEntity.status(201).body(book);
+    public Book addBook(Book book) {
+        return bookRepository.save(book);
     }
 
-    public ResponseEntity<Book> updateBook(Book book) {
-        bookRepository.save(book);
-        return ResponseEntity.ok(book);
+    public Book updateBook(Book book) {
+        return bookRepository.save(book);
     }
 
-    public ResponseEntity<String> deleteBook(int id) {
+    public Boolean deleteBook(int id) {
         Optional<Book> book = bookRepository.findById(id);
         if (book.isPresent()) {
             bookRepository.deleteById(id);
-            return ResponseEntity.status(200).body("Book deleted");
+            return true;
         }
-        return ResponseEntity.notFound().build();
+        return false;
     }
 
 }

@@ -8,11 +8,11 @@ import java.time.Instant;
 @Data
 @Entity
 @Table(name = "order_details")
-public class Orderdetails {
+public class OrderDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orderdetails_id")
-    private long orderDetailsId;
+    private int orderDetailsId;
 
     @Column(name = "quantity")
     private int quantity;

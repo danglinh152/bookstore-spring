@@ -17,17 +17,17 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-//    @ExceptionHandler(value = {
-//            BadCredentialsException.class,
-////            UsernameNotFoundException.class  //no needed
-//    })
-//    public ResponseEntity<RestResponse<Object>> handleException(Exception e) {
-//        RestResponse<Object> res = new RestResponse<>();
-//        res.setError("Exception occured");
-//        res.setMessage(e.getMessage());
-//        res.setStatusCode(400);
-//        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(res);
-//    }
+    @ExceptionHandler(value = {
+            BadCredentialsException.class,
+//            UsernameNotFoundException.class  //no needed
+    })
+    public ResponseEntity<RestResponse<Object>> handleException(Exception e) {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setError("Exception occured");
+        res.setMessage(e.getMessage());
+        res.setStatusCode(400);
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(res);
+    }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

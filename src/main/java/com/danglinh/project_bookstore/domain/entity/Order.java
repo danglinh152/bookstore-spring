@@ -1,6 +1,5 @@
 package com.danglinh.project_bookstore.domain.entity;
 
-import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class Order {
             CascadeType.DETACH,
             CascadeType.REFRESH
     })
-    private List<Orderdetails> listOfOrderdetails;
+    private List<OrderDetails> listOfOrderdetails;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,

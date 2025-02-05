@@ -1,6 +1,7 @@
 package com.danglinh.project_bookstore.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.Instant;
@@ -17,6 +18,7 @@ public class Book {
     private int bookId;
 
     @Column(name = "title", length = 256)
+    @NotBlank(message = "title cannot be blank!")
     private String title;
 
     @Column(name = "author", length = 512)
@@ -28,7 +30,7 @@ public class Book {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @Column(name = "description_details", columnDefinition = "LONGTEXT  ")
+    @Column(name = "description_details", columnDefinition = "LONGTEXT")
     private String descriptionDetails;
 
     @Column(name = "info_details", columnDefinition = "LONGTEXT")
@@ -82,7 +84,7 @@ public class Book {
             CascadeType.DETACH,
             CascadeType.REFRESH
     })
-    private List<Orderdetails> listOfOrderdetails;
+    private List<OrderDetails> listOfOrderdetails;
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Favorite> listOfFavorite;

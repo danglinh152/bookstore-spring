@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "favorite")
+@Table(name = "favorites")
 public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

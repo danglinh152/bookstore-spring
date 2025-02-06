@@ -1,19 +1,25 @@
 package com.danglinh.project_bookstore.service;
 
 
+import com.danglinh.project_bookstore.domain.DTO.response.Meta;
+import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
 import com.danglinh.project_bookstore.domain.entity.User;
 import com.danglinh.project_bookstore.repository.UserRepository;
 import com.danglinh.project_bookstore.util.error.IdInvalidException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -28,9 +34,21 @@ public class UserService {
         throw new IdInvalidException("User Not Found");
     }
 
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public ResponsePaginationDTO findAllUsers(Specification<User> spec, Pageable pageable) {
+        Page<User> pageUser = userRepository.findAll(spec, pageable);
+        Meta meta = new Meta();
+        meta.setCurrentPage(pageUser.getNumber() + 1);
+        meta.setPageSize(pageUser.getSize());
+        meta.setTotal(pageUser.getTotalElements());
+        meta.setTotalPages(pageUser.getTotalPages());
+
+        ResponsePaginationDTO responsePaginationDTO = new ResponsePaginationDTO();
+        responsePaginationDTO.setMeta(meta);
+        responsePaginationDTO.setData(pageUser.getContent());
+
+        return responsePaginationDTO;
     }
+
 
     public User addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));

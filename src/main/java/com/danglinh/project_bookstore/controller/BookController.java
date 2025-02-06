@@ -1,10 +1,12 @@
 package com.danglinh.project_bookstore.controller;
 
 
+import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
 import com.danglinh.project_bookstore.domain.entity.Book;
 import com.danglinh.project_bookstore.service.BookService;
 import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +23,8 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.findAllBooks();
-        if (books.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(books);
+    public ResponseEntity<ResponsePaginationDTO> getAllBooks(Pageable pageable) {
+        return ResponseEntity.ok(bookService.findAllBooks(pageable));
     }
 
     @GetMapping("/books/{id}")

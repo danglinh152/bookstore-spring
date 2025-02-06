@@ -1,9 +1,12 @@
 package com.danglinh.project_bookstore.service;
 
 
+import com.danglinh.project_bookstore.domain.DTO.response.Meta;
+import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
 import com.danglinh.project_bookstore.domain.entity.Book;
 import com.danglinh.project_bookstore.repository.BookRepository;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,18 +22,22 @@ public class BookService {
 
     public Book findBookById(int id) {
         Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent()) {
-            return book.get();
-        }
-        return null;
+        return book.orElse(null);
     }
 
-    public List<Book> findAllBooks() {
-        List<Book> books = bookRepository.findAll();
-        if (books.isEmpty()) {
-            return null;
-        }
-        return books;
+    public ResponsePaginationDTO findAllBooks(Pageable pageable) {
+        Page<Book> pageBook = bookRepository.findAll(pageable);
+        Meta meta = new Meta();
+        meta.setCurrentPage(pageBook.getNumber() + 1);
+        meta.setPageSize(pageBook.getSize());
+        meta.setTotal(pageBook.getTotalElements());
+        meta.setTotalPages(pageBook.getTotalPages());
+
+        ResponsePaginationDTO responsePaginationDTO = new ResponsePaginationDTO();
+        responsePaginationDTO.setMeta(meta);
+        responsePaginationDTO.setData(pageBook.getContent());
+
+        return responsePaginationDTO;
     }
 
     public Book addBook(Book book) {

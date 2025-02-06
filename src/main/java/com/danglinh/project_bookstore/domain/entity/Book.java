@@ -1,5 +1,7 @@
 package com.danglinh.project_bookstore.domain.entity;
 
+import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -48,12 +50,14 @@ public class Book {
     @Column(name = "avg_rate")
     private double avgRate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss a", timezone = "GMT+7")
     @Column(name = "created_at")
     private Instant createdAt;
 
     @Column(name = "created_by")
     private String createdBy;
 
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss a", timezone = "GMT+7")
     @Column(name = "updated_at")
     private Instant updatedAt;
 
@@ -88,4 +92,24 @@ public class Book {
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Favorite> listOfFavorite;
+
+    @PrePersist
+    public void beforeCreate() {
+        this.createdAt = Instant.now();
+        if (SecurityUtil.getCurrentUser().isEmpty()) {
+            this.createdBy = "unknown";
+        } else {
+            this.createdBy = SecurityUtil.getCurrentUser().get();
+        }
+    }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        this.updatedAt = Instant.now();
+        if (SecurityUtil.getCurrentUser().isEmpty()) {
+            this.updatedBy = "unknown";
+        } else {
+            this.updatedBy = SecurityUtil.getCurrentUser().get();
+        }
+    }
 }

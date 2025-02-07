@@ -6,15 +6,16 @@ import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
 import com.danglinh.project_bookstore.domain.entity.User;
 import com.danglinh.project_bookstore.repository.UserRepository;
 import com.danglinh.project_bookstore.util.error.IdInvalidException;
+import com.danglinh.project_bookstore.util.error.UserCreationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -51,6 +52,18 @@ public class UserService {
 
 
     public User addUser(User user) {
+        List<String> errorMessages = new ArrayList<>();
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            errorMessages.add("Email already exists.");
+        }
+        if (userRepository.existsByUsername(user.getUsername())) {
+            errorMessages.add("Username already exists.");
+        }
+
+        if (!errorMessages.isEmpty()) {
+            throw new UserCreationException(errorMessages);
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }

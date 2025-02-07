@@ -1,7 +1,10 @@
 package com.danglinh.project_bookstore.util.error;
 
+import lombok.Getter;
+
 import java.util.List;
 
+@Getter
 public class UserCreationException extends RuntimeException {
     private final List<String> errorMessages;
 
@@ -10,7 +13,4 @@ public class UserCreationException extends RuntimeException {
         this.errorMessages = errorMessages;
     }
 
-    public List<String> getErrorMessages() {
-        return errorMessages;
-    }
 }

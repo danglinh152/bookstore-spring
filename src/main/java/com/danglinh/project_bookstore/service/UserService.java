@@ -91,4 +91,8 @@ public class UserService {
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
     }
+
+    public User findUserByUsernameAndRefreshToken(String username, String refreshToken) {
+        return userRepository.findByUsernameAndRefreshToken(username, refreshToken);
+    }
 }

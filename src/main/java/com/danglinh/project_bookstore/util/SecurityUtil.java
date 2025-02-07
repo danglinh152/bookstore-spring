@@ -3,6 +3,7 @@ package com.danglinh.project_bookstore.util;
 
 import com.danglinh.project_bookstore.domain.DTO.response.ResLoginDTO;
 import com.danglinh.project_bookstore.domain.entity.User;
+import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,9 @@ public class SecurityUtil {
     public final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
 
+    @Value("${danglinh.jwt.base64-secret}")
+    private String jwtKey;
+
     @Value("${danglinh.jwt.access-token-validity-in-seconds}")
     private long accessTokenValidityInSeconds;
 
@@ -37,14 +41,14 @@ public class SecurityUtil {
     }
 
 
-    public String createAccessToken(Authentication authentication) {
+    public String createAccessToken(User user) {
         Instant now = Instant.now();
         Instant expiresAt = now.plusSeconds(accessTokenValidityInSeconds);
 
         JwtClaimsSet claims = JwtClaimsSet.builder().issuedAt(now)
                 .expiresAt(expiresAt)
-                .claim("test", authentication)
-                .subject(authentication.getName())
+                .claim("infoAccessToken", user.getListOfRole())
+                .subject(user.getUsername())
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
@@ -64,7 +68,7 @@ public class SecurityUtil {
 
         JwtClaimsSet claims = JwtClaimsSet.builder().issuedAt(now)
                 .expiresAt(expiresAt)
-                .claim("info", userLogin)
+                .claim("infoRefreshToken", userLogin)
                 .subject(user.getUsername())
                 .build();
 
@@ -90,6 +94,20 @@ public class SecurityUtil {
             return string;
         } else {
             return null;
+        }
+    }
+
+    public SecretKey getJwtKey() {
+        byte[] keyBytes = Base64.from(jwtKey).decode();
+        return new SecretKeySpec(keyBytes, 0, keyBytes.length, JWT_ALGORITHM.getName());
+    }
+
+    public Jwt decodeRefreshToken(String refreshToken) throws IdInvalidException {
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(getJwtKey()).macAlgorithm(JWT_ALGORITHM).build();
+        try {
+            return jwtDecoder.decode(refreshToken);
+        } catch (Exception e) {
+            throw new IdInvalidException("Refresh token could not be decoded");
         }
     }
 }

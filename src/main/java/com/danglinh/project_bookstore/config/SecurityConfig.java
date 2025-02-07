@@ -1,6 +1,7 @@
 package com.danglinh.project_bookstore.config;
 
 
+import com.danglinh.project_bookstore.util.SecurityUtil;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +29,12 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
+
     @Value("${danglinh.jwt.base64-secret}")
     private String jwtKey;
 
     public final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -44,7 +47,7 @@ public class SecurityConfig {
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(
                         authorizeRequests ->
-                                authorizeRequests.requestMatchers("/", "/login").permitAll()
+                                authorizeRequests.requestMatchers("/", "/sign-in", "/refresh", "/get-account").permitAll()
                                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oAuth2ResourceServer -> oAuth2ResourceServer.jwt(Customizer.withDefaults())

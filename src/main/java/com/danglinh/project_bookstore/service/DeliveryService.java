@@ -1,8 +1,15 @@
 package com.danglinh.project_bookstore.service;
 
 
+import com.danglinh.project_bookstore.domain.DTO.response.Meta;
+import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
+import com.danglinh.project_bookstore.domain.entity.Book;
 import com.danglinh.project_bookstore.domain.entity.Delivery;
+import com.danglinh.project_bookstore.domain.entity.User;
 import com.danglinh.project_bookstore.repository.DeliveryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,18 +25,22 @@ public class DeliveryService {
 
     public Delivery findDeliveryById(int id) {
         Optional<Delivery> delivery = deliveryRepository.findById(id);
-        if (delivery.isPresent()) {
-            return delivery.get();
-        }
-        return null;
+        return delivery.orElse(null);
     }
 
-    public List<Delivery> findAllDeliveries() {
-        List<Delivery> deliveries = deliveryRepository.findAll();
-        if (deliveries.isEmpty()) {
-            return null;
-        }
-        return deliveries;
+    public ResponsePaginationDTO findAllDeliveries(Specification<Delivery> spec, Pageable pageable) {
+        Page<Delivery> pageDelivery = deliveryRepository.findAll(spec, pageable);
+        Meta meta = new Meta();
+        meta.setCurrentPage(pageable.getPageNumber() + 1); //luu y
+        meta.setPageSize(pageable.getPageSize()); //luu y
+        meta.setTotal(pageDelivery.getTotalElements());
+        meta.setTotalPages(pageDelivery.getTotalPages());
+
+        ResponsePaginationDTO responsePaginationDTO = new ResponsePaginationDTO();
+        responsePaginationDTO.setMeta(meta);
+        responsePaginationDTO.setData(pageDelivery.getContent());
+
+        return responsePaginationDTO;
     }
 
     public Delivery addDelivery(Delivery delivery) {

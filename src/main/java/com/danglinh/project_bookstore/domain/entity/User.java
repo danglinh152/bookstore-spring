@@ -3,6 +3,8 @@ package com.danglinh.project_bookstore.domain.entity;
 import java.time.Instant;
 import java.util.List;
 
+import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.danglinh.project_bookstore.util.constant.Gender;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -33,7 +35,8 @@ public class User {
     private String password;
 
     @Column(name = "gender")
-    private char gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "email")
     private String email;
@@ -89,5 +92,25 @@ public class User {
             CascadeType.REFRESH
     })
     private List<Order> listOfOrder;
+
+    @PrePersist
+    public void beforeCreate() {
+        this.createdAt = Instant.now();
+        if (SecurityUtil.getCurrentUser().isEmpty()) {
+            this.createdBy = "unknown";
+        } else {
+            this.createdBy = SecurityUtil.getCurrentUser().get();
+        }
+    }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        this.updatedAt = Instant.now();
+        if (SecurityUtil.getCurrentUser().isEmpty()) {
+            this.updatedBy = "unknown";
+        } else {
+            this.updatedBy = SecurityUtil.getCurrentUser().get();
+        }
+    }
 
 }

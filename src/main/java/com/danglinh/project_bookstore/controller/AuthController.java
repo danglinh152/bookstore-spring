@@ -4,6 +4,7 @@ package com.danglinh.project_bookstore.controller;
 import com.danglinh.project_bookstore.domain.DTO.request.LoginDTO;
 import com.danglinh.project_bookstore.domain.DTO.response.AccessTokenDTO;
 import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.danglinh.project_bookstore.util.annotation.ApiMessage;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +30,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
+    @ApiMessage("Login")
     public ResponseEntity<AccessTokenDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);

@@ -3,6 +3,7 @@ package com.danglinh.project_bookstore.domain.entity;
 import java.time.Instant;
 import java.util.List;
 
+import com.danglinh.project_bookstore.util.SecurityUtil;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -40,4 +41,24 @@ public class Role {
             joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")})
     private List<User> listOfUser;
+
+    @PrePersist
+    public void beforeCreate() {
+        this.createdAt = Instant.now();
+        if (SecurityUtil.getCurrentUser().isEmpty()) {
+            this.createdBy = "unknown";
+        } else {
+            this.createdBy = SecurityUtil.getCurrentUser().get();
+        }
+    }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        this.updatedAt = Instant.now();
+        if (SecurityUtil.getCurrentUser().isEmpty()) {
+            this.updatedBy = "unknown";
+        } else {
+            this.updatedBy = SecurityUtil.getCurrentUser().get();
+        }
+    }
 }

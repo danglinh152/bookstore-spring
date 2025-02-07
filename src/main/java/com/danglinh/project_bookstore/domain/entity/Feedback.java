@@ -1,5 +1,6 @@
 package com.danglinh.project_bookstore.domain.entity;
 
+import com.danglinh.project_bookstore.util.SecurityUtil;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -51,4 +52,24 @@ public class Feedback {
     )
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @PrePersist
+    public void beforeCreate() {
+        this.createdAt = Instant.now();
+        if (SecurityUtil.getCurrentUser().isEmpty()) {
+            this.createdBy = "unknown";
+        } else {
+            this.createdBy = SecurityUtil.getCurrentUser().get();
+        }
+    }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        this.updatedAt = Instant.now();
+        if (SecurityUtil.getCurrentUser().isEmpty()) {
+            this.updatedBy = "unknown";
+        } else {
+            this.updatedBy = SecurityUtil.getCurrentUser().get();
+        }
+    }
 }

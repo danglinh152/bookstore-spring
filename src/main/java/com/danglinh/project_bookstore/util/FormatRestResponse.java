@@ -2,6 +2,7 @@ package com.danglinh.project_bookstore.util;
 
 
 import com.danglinh.project_bookstore.domain.DTO.response.RestResponse;
+import com.danglinh.project_bookstore.util.annotation.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -10,7 +11,10 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import java.lang.annotation.Annotation;
 
 @ControllerAdvice
 public class FormatRestResponse implements ResponseBodyAdvice<Object> {
@@ -20,9 +24,9 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
     }
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-//        ServletServerHttpResponse servletServerHttpResponse = (ServletServerHttpResponse) response;
-//        HttpServletResponse servletResponse = servletServerHttpResponse.getServletResponse();
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
+                                  Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  ServerHttpRequest request, ServerHttpResponse response) {
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int statusCode = servletResponse.getStatus();
 
@@ -34,13 +38,19 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         }
 
         if (statusCode >= 400) {
-//            case error
+            // Case error
             return body;
         } else {
-//            case success
-            res.setMessage("CALL API SUCCESS");
+            // Case success
+            ApiMessage apiMessage = returnType.getMethodAnnotation(ApiMessage.class);
+            if (apiMessage != null) {
+                res.setMessage(apiMessage.value());
+            } else {
+                res.setMessage("Call API Success"); // Default message if annotation is not present
+            }
             res.setData(body);
         }
         return res;
     }
+
 }

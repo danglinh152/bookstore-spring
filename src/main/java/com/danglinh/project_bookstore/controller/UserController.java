@@ -4,6 +4,7 @@ package com.danglinh.project_bookstore.controller;
 import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
 import com.danglinh.project_bookstore.domain.entity.User;
 import com.danglinh.project_bookstore.service.UserService;
+import com.danglinh.project_bookstore.util.annotation.ApiMessage;
 import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import com.turkraft.springfilter.boot.Filter;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    @ApiMessage("Fetch All Users")
     public ResponseEntity<ResponsePaginationDTO> getAllUsers(
             @Filter Specification<User> spec,
             Pageable pageable
@@ -31,8 +33,8 @@ public class UserController {
     }
 
 
-
     @GetMapping("/users/{id}")
+    @ApiMessage("Fetch A User with Id")
     public ResponseEntity<User> getUser(@PathVariable int id) throws IdInvalidException {
         if (userService.findUserById(id) == null) {
             throw new IdInvalidException("User with id " + id + " not found");
@@ -41,6 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
+    @ApiMessage("Create A User with Id")
     public ResponseEntity<User> addUser(@RequestBody User user) {
         if (userService.addUser(user) == null) {
             return ResponseEntity.internalServerError().build();
@@ -50,6 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
+    @ApiMessage("Update A User")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         if (userService.updateUser(user) == null) {
             return ResponseEntity.internalServerError().build();
@@ -58,6 +62,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
+    @ApiMessage("Delete A User with Id")
     public ResponseEntity<String> deleteUser(@PathVariable int id) {
         if (userService.deleteUser(id)) {
             return ResponseEntity.status(HttpStatus.OK).body("User with id " + id + " deleted successfully");

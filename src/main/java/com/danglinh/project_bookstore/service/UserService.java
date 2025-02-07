@@ -37,8 +37,8 @@ public class UserService {
     public ResponsePaginationDTO findAllUsers(Specification<User> spec, Pageable pageable) {
         Page<User> pageUser = userRepository.findAll(spec, pageable);
         Meta meta = new Meta();
-        meta.setCurrentPage(pageUser.getNumber() + 1);
-        meta.setPageSize(pageUser.getSize());
+        meta.setCurrentPage(pageable.getPageNumber() + 1); //luu y
+        meta.setPageSize(pageable.getPageSize()); //luu y
         meta.setTotal(pageUser.getTotalElements());
         meta.setTotalPages(pageUser.getTotalPages());
 

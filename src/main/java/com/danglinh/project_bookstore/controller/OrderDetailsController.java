@@ -25,8 +25,8 @@ public class OrderDetailsController {
         this.orderDetailsService = orderDetailsService;
     }
 
-    @GetMapping("/orderDetailss")
-    @ApiMessage("Fetch All OrderDetailss")
+    @GetMapping("/order-details")
+    @ApiMessage("Fetch All OrderDetails")
     public ResponseEntity<ResponsePaginationDTO> getAllOrderDetailss(
             @Filter Specification<OrderDetails> spec,
             Pageable pageable
@@ -34,7 +34,7 @@ public class OrderDetailsController {
         return ResponseEntity.ok(orderDetailsService.findAllOrderDetails(spec, pageable));
     }
 
-    @GetMapping("/orderDetailss/{id}")
+    @GetMapping("/order-details/{id}")
     @ApiMessage("Fetch A OrderDetails with Id")
     public ResponseEntity<OrderDetails> getOrderDetailsById(@PathVariable int id) throws IdInvalidException {
         if (id > 9999) {
@@ -46,7 +46,7 @@ public class OrderDetailsController {
         return ResponseEntity.ok(orderDetailsService.findOrderDetailsById(id));
     }
 
-    @PostMapping("/orderDetailss")
+    @PostMapping("/order-details")
     @ApiMessage("Create A OrderDetails")
     public ResponseEntity<OrderDetails> createOrderDetails(@Valid @RequestBody OrderDetails orderDetails) {
         if (orderDetailsService.addOrderDetails(orderDetails) == null) {
@@ -55,7 +55,7 @@ public class OrderDetailsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderDetails);
     }
 
-    @PutMapping("/orderDetailss")
+    @PutMapping("/order-details")
     @ApiMessage("Update A OrderDetails")
     public ResponseEntity<OrderDetails> updateOrderDetails(@Valid @RequestBody OrderDetails orderDetails) {
         if (orderDetailsService.updateOrderDetails(orderDetails) == null) {
@@ -64,7 +64,7 @@ public class OrderDetailsController {
         return ResponseEntity.status(HttpStatus.OK).body(orderDetails);
     }
 
-    @DeleteMapping("/orderDetailss/{id}")
+    @DeleteMapping("/order-details/{id}")
     @ApiMessage("Delete A OrderDetails with Id")
     public ResponseEntity<String> deleteOrderDetails(@PathVariable int id) {
         if (orderDetailsService.deleteOrderDetails(id)) {

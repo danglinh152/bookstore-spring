@@ -1,6 +1,7 @@
 package com.danglinh.project_bookstore.util;
 
 
+import com.danglinh.project_bookstore.domain.DTO.response.ResLoginDTO;
 import com.danglinh.project_bookstore.domain.entity.User;
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,22 +26,46 @@ public class SecurityUtil {
     public final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
 
-    @Value("${danglinh.jwt.token-validity-in-seconds}")
-    private long jwtValidity;
+    @Value("${danglinh.jwt.access-token-validity-in-seconds}")
+    private long accessTokenValidityInSeconds;
+
+    @Value("${danglinh.jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenValidityInSeconds;
 
     public SecurityUtil(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
     }
 
 
-    public String createToken(Authentication authentication) {
+    public String createAccessToken(Authentication authentication) {
         Instant now = Instant.now();
-        Instant expiresAt = now.plusSeconds(jwtValidity);
+        Instant expiresAt = now.plusSeconds(accessTokenValidityInSeconds);
 
         JwtClaimsSet claims = JwtClaimsSet.builder().issuedAt(now)
                 .expiresAt(expiresAt)
                 .claim("test", authentication)
                 .subject(authentication.getName())
+                .build();
+
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+
+        return jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    public String createRefreshToken(User user) {
+        Instant now = Instant.now();
+        Instant expiresAt = now.plusSeconds(refreshTokenValidityInSeconds);
+
+        ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin();
+        userLogin.setUsername(user.getUsername());
+        userLogin.setEmail(user.getEmail());
+        userLogin.setFirstName(user.getFirstName());
+        userLogin.setLastName(user.getLastName());
+
+        JwtClaimsSet claims = JwtClaimsSet.builder().issuedAt(now)
+                .expiresAt(expiresAt)
+                .claim("info", userLogin)
+                .subject(user.getUsername())
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

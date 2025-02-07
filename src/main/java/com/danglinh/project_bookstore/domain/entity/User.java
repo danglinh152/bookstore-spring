@@ -34,6 +34,9 @@ public class User {
     @Column(name = "password", length = 512)
     private String password;
 
+    @Column(name = "refresh_token", columnDefinition = "LONGTEXT")
+    private String refreshToken;
+
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private Gender gender;

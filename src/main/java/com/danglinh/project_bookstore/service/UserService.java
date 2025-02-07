@@ -72,4 +72,10 @@ public class UserService {
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    public void updateRefreshToken(String username, String refreshToken) {
+        User user = userRepository.findByUsername(username);
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
+    }
 }

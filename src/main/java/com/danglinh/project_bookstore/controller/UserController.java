@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    @ApiMessage("Create A User with Id")
+    @ApiMessage("Create A User")
     public ResponseEntity<User> addUser(@RequestBody User user) {
         if (userService.addUser(user) == null) {
             return ResponseEntity.internalServerError().build();

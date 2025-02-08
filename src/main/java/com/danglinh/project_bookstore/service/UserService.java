@@ -95,4 +95,27 @@ public class UserService {
     public User findUserByUsernameAndRefreshToken(String username, String refreshToken) {
         return userRepository.findByUsernameAndRefreshToken(username, refreshToken);
     }
+
+    public void updateActivateCode(String username, String activateCode) {
+        User user = userRepository.findByUsername(username);
+        user.setActivateCode(activateCode);
+        userRepository.save(user);
+    }
+
+    public User findUserByUsernameAndActivateCode(String username, String activateCode) {
+        return userRepository.findByUsernameAndActivateCode(username, activateCode);
+    }
+
+//    public Boolean activateAccount(String username, String activateCode) {
+//        User user = userRepository.findByUsername(username);
+//        if (user.getActivateCode().equals(activateCode)) {
+//            user.setActivate(true);
+//            userRepository.save(user);
+//            return true;
+//        } else {
+//            user.setActivate(false);
+//            userRepository.save(user);
+//            return false;
+//        }
+//    }
 }

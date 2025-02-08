@@ -1,4 +1,4 @@
-package com.danglinh.project_bookstore.util;
+package com.danglinh.project_bookstore.config;
 
 
 import com.danglinh.project_bookstore.domain.DTO.response.RestResponse;
@@ -11,10 +11,7 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-
-import java.lang.annotation.Annotation;
 
 @ControllerAdvice
 public class FormatRestResponse implements ResponseBodyAdvice<Object> {

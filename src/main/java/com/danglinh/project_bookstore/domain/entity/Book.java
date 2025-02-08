@@ -1,6 +1,6 @@
 package com.danglinh.project_bookstore.domain.entity;
 
-import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -64,12 +64,7 @@ public class Book {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "book_genre",
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "genre_id")})

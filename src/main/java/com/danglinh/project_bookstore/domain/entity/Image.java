@@ -1,6 +1,7 @@
 package com.danglinh.project_bookstore.domain.entity;
 
-import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.danglinh.project_bookstore.util.security.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -40,14 +41,17 @@ public class Image {
     @Column(name = "updated_by")
     private String updatedBy;
 
+    @JsonIgnore
     @ManyToOne(
-            fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH}
+            fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.DETACH,
+                    CascadeType.REFRESH
+            }
     )
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id")
     private Book book;
 
     @PrePersist

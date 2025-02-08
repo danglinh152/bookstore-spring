@@ -3,7 +3,7 @@ package com.danglinh.project_bookstore.domain.entity;
 import java.time.Instant;
 import java.util.List;
 
-import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import com.danglinh.project_bookstore.util.constant.Gender;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

@@ -10,5 +10,5 @@ public class ProjectBookstoreApplication {
         SpringApplication.run(ProjectBookstoreApplication.class, args);
     }
 
-	
+
 }

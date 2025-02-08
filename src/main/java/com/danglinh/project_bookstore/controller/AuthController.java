@@ -2,11 +2,13 @@ package com.danglinh.project_bookstore.controller;
 
 
 import com.danglinh.project_bookstore.domain.DTO.request.LoginDTO;
+import com.danglinh.project_bookstore.domain.DTO.response.ActivateDTO;
 import com.danglinh.project_bookstore.domain.DTO.response.CurrentUserDTO;
 import com.danglinh.project_bookstore.domain.DTO.response.ResLoginDTO;
 import com.danglinh.project_bookstore.domain.entity.User;
+import com.danglinh.project_bookstore.service.EmailService;
 import com.danglinh.project_bookstore.service.UserService;
-import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import com.danglinh.project_bookstore.util.annotation.ApiMessage;
 import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import jakarta.validation.Valid;
@@ -23,6 +25,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.Random;
+
 
 @RestController
 public class AuthController {
@@ -30,14 +35,16 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
+    private final EmailService emailService;
 
     @Value("${danglinh.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenValidityInSeconds;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
+        this.emailService = emailService;
     }
 
 
@@ -134,7 +141,7 @@ public class AuthController {
     }
 
     @GetMapping("/get-account")
-    @ApiMessage("Get Account")
+    @ApiMessage("Get A Account")
     public ResponseEntity<CurrentUserDTO> getAccount(@CookieValue(name = "refresh_token", defaultValue = "abc") String refreshToken)
             throws IdInvalidException {
 
@@ -156,5 +163,45 @@ public class AuthController {
         currentUserDTO.setLastName(currentUser.getLastName());
 
         return ResponseEntity.ok(currentUserDTO);
+    }
+
+    @PostMapping("/get-activate")
+    @ApiMessage("Get Activate Link")
+    public ResponseEntity<ActivateDTO> getActivateLink(@Valid @RequestBody LoginDTO loginDTO) throws IdInvalidException {
+        User currentUser = userService.findUserByUsername(loginDTO.getUsername());
+
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(6);
+
+        for (int i = 0; i < 6; i++) {
+            int digit = random.nextInt(10); // Tạo số từ 0 đến 9
+            sb.append(digit);
+        }
+
+
+        try {
+            emailService.send("storetenpm@gmail.com", currentUser.getEmail(), "Activate The Account", "Click to activate: http://localhost:8080/activate?acti=" + sb.toString() + "&username=" + loginDTO.getUsername());
+            userService.updateActivateCode(currentUser.getUsername(), sb.toString());
+            ActivateDTO activateDTO = new ActivateDTO();
+            activateDTO.setActivateCode(sb.toString());
+            activateDTO.setUserLogin(new ActivateDTO.UserLogin(currentUser.getUsername(), currentUser.getEmail(), currentUser.getFirstName(), currentUser.getLastName()));
+            return ResponseEntity.status(HttpStatus.OK).body(activateDTO);
+        } catch (IdInvalidException e) {
+            throw new IdInvalidException("Can not send email!");
+        }
+    }
+
+    @GetMapping("/activate")
+    @ApiMessage("Activate A Account")
+    public ResponseEntity<String> activateAccount(@RequestParam String acti, @RequestParam String username) throws IdInvalidException {
+        User currentUser = userService.findUserByUsernameAndActivateCode(username, acti);
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Activate Failed!");
+        } else {
+            currentUser.setActivate(true);
+            userService.updateUser(currentUser);
+            return ResponseEntity.status(HttpStatus.OK).body("Activate Success!");
+        }
     }
 }

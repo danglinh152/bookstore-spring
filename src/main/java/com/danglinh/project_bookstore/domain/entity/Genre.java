@@ -1,6 +1,6 @@
 package com.danglinh.project_bookstore.domain.entity;
 
-import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -32,12 +32,7 @@ public class Genre {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "book_genre",
             joinColumns = {@JoinColumn(name = "genre_id")},
             inverseJoinColumns = {@JoinColumn(name = "book_id")})

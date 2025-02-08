@@ -1,6 +1,6 @@
 package com.danglinh.project_bookstore.domain.entity;
 
-import com.danglinh.project_bookstore.util.SecurityUtil;
+import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -35,7 +35,7 @@ public class Favorite {
             CascadeType.DETACH,
             CascadeType.REFRESH}
     )
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
 
@@ -46,7 +46,7 @@ public class Favorite {
             CascadeType.DETACH,
             CascadeType.REFRESH}
     )
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id")
     private Book book;
 
     @PrePersist

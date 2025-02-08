@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,6 +20,12 @@ public class Role {
     @Column(name = "role_name")
     private String roleName;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "is_active")
+    private boolean isActive;
+
     @Column(name = "created_at")
     private Instant createdAt;
 
@@ -30,6 +37,13 @@ public class Role {
 
     @Column(name = "updated_by")
     private String updatedBy;
+
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "permission_role",
+            joinColumns = {@JoinColumn(name = "role_id")},
+            inverseJoinColumns = {@JoinColumn(name = "permission_id")})
+    private List<Permission> listOfPermissions;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,

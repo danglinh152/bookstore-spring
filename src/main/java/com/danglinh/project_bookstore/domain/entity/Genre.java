@@ -1,6 +1,8 @@
 package com.danglinh.project_bookstore.domain.entity;
 
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -32,10 +34,8 @@ public class Genre {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "book_genre",
-            joinColumns = {@JoinColumn(name = "genre_id")},
-            inverseJoinColumns = {@JoinColumn(name = "book_id")})
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "listOfGenre")
+    @JsonIgnoreProperties("listOfGenre")
     private List<Book> listOfBook;
 
     @PrePersist

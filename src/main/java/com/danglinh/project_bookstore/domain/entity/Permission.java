@@ -1,34 +1,37 @@
 package com.danglinh.project_bookstore.domain.entity;
 
+
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.List;
 
-@Data
 @Entity
-@Table(name = "images")
-public class Image {
+@Table(name = "permissions")
+@Data
+public class Permission {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "image_id")
-    private int imageId;
+    @Column(name = "permission_id")
+    private int permissionId;
 
-    @Column(name = "name", length = 256)
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "is_icon")
-    private boolean isIcon;
+    @Column(name = "apiPath")
+    private String apiPath;
 
-    @Column(name = "path")
-    private String path; // if path is null => data
+    @Column(name = "method")
+    private String method;
 
-    @Column(name = "data", columnDefinition = "LONGTEXT")
-    @Lob
-    private String data; //
+    @Column(name = "module")
+    private String module;
 
     @Column(name = "created_at")
     private Instant createdAt;
@@ -42,18 +45,10 @@ public class Image {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @JsonIgnoreProperties("listOfImage")
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.DETACH,
-                    CascadeType.REFRESH
-            }
-    )
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "listOfPermissions")
+    @JsonIgnoreProperties("listOfPermissions")
+    private List<Role> listOfRoles;
+
 
     @PrePersist
     public void beforeCreate() {

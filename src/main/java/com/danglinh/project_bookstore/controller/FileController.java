@@ -6,11 +6,13 @@ import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @Controller
+@RequestMapping("/api")
 public class FileController {
     private FileService fileService;
 

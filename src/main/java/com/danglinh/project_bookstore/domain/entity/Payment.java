@@ -37,7 +37,7 @@ public class Payment {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {
+    @OneToMany(mappedBy = "payment", fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.DETACH,

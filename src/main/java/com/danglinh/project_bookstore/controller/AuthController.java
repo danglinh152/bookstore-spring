@@ -30,6 +30,7 @@ import java.util.Random;
 
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -163,6 +164,15 @@ public class AuthController {
         currentUserDTO.setLastName(currentUser.getLastName());
 
         return ResponseEntity.ok(currentUserDTO);
+    }
+
+    @PostMapping("/register")
+    @ApiMessage("Create The Account")
+    public ResponseEntity<User> regAccount(@RequestBody User user) {
+        if (userService.addUser(user) == null) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @PostMapping("/get-activate")

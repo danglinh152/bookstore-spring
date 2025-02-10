@@ -60,6 +60,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
+    @ExceptionHandler(IdInvalidException.class)
+    public ResponseEntity<RestResponse<Object>> handleIdInvalidException(IdInvalidException e) {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setError("Exception occured");
+        res.setMessage(e.getMessage());
+        res.setStatusCode(400);
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(res);
+    }
 
 }
 

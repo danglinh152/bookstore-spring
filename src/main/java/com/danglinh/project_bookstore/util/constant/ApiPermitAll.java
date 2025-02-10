@@ -7,20 +7,22 @@ public class ApiPermitAll {
 
     // Endpoint cho phương thức GET
     public static final String[] PUBLIC_GET_ENDPOINTS = {
-            "/get-account",
-            "/refresh",
+            "/auth/get-account",
+            "/auth/refresh",
+            "/auth/activate",
+            "/auth/get-activate",
+            "/auth/deactivate",
             "/api/books/**",
             "/api/feedbacks/**",
             "/api/users?filter=**",
-            "/api/account/activate",
-            "/api/account/deactivate",
 //            "/api/books/favorite"
     };
 
     // Endpoint cho phương thức POST
     public static final String[] PUBLIC_POST_ENDPOINTS = {
-            "/sign-in",
-            "/account/register",
+            "/auth/sign-in",
+            "/auth/sign-out",
+            "/auth/register",
 //            "/api/book/feedback/givefeedback",
 //            "/api/book/favorite"
     };

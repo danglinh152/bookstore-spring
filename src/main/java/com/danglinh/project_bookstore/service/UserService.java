@@ -21,10 +21,12 @@ import java.util.Optional;
 public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleService roleService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
     public User findUserById(int id) throws IdInvalidException {
@@ -59,6 +61,11 @@ public class UserService {
         }
         if (userRepository.existsByUsername(user.getUsername())) {
             errorMessages.add("Username already exists.");
+        }
+        if (roleService.findRoleById(user.getRole().getRoleId()) == null || user.getRole() == null) {
+            user.setRole(null);
+        } else {
+            user.setRole(roleService.findRoleById(user.getRole().getRoleId()));
         }
 
         if (!errorMessages.isEmpty()) {

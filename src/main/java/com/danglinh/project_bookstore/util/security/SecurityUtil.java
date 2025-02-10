@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Optional;
 
 
@@ -47,7 +48,8 @@ public class SecurityUtil {
 
         JwtClaimsSet claims = JwtClaimsSet.builder().issuedAt(now)
                 .expiresAt(expiresAt)
-                .claim("infoAccessToken", user.getListOfRole())
+                .claim("infoAccessToken", user.getUsername())
+
                 .subject(user.getUsername())
                 .build();
 

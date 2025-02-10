@@ -43,17 +43,15 @@ public class Role {
     @JoinTable(name = "permission_role",
             joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns = {@JoinColumn(name = "permission_id")})
+    @JsonIgnoreProperties("listOfRoles")
     private List<Permission> listOfPermissions;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+    @OneToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.DETACH,
             CascadeType.REFRESH
-    })
-    @JoinTable(name = "user_role",
-            joinColumns = {@JoinColumn(name = "role_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    }, mappedBy = "role")
     private List<User> listOfUser;
 
     @PrePersist

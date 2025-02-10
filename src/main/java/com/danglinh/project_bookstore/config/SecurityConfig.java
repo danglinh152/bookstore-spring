@@ -50,10 +50,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorizeRequests ->
                                 authorizeRequests
+                                        .requestMatchers("/storage/**").permitAll()
                                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
-                                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
+//                                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
                                         .requestMatchers(HttpMethod.DELETE, PUBLIC_DELETE_ENDPOINTS).permitAll()
-                                        .anyRequest().permitAll()
+                                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oAuth2ResourceServer -> oAuth2ResourceServer.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))

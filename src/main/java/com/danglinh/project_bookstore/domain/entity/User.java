@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import com.danglinh.project_bookstore.util.constant.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -78,16 +79,17 @@ public class User {
     @JsonManagedReference
     private List<Favorite> listOfFavorite;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.DETACH,
             CascadeType.REFRESH
     })
-    @JoinTable(name = "user_role",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private List<Role> listOfRole;
+    @JoinColumn(name = "role_id")
+    @JsonIgnoreProperties("listOfUser")
+    private Role role;
+
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,

@@ -49,7 +49,6 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
-
     }
 
     @PutMapping("/users")

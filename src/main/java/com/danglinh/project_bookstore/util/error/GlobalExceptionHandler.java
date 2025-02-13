@@ -18,6 +18,19 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = {
+            Exception.class
+//            UsernameNotFoundException.class  //no needed
+    })
+    public ResponseEntity<RestResponse<Object>> handleEx(Exception e) {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setError("Exception occured");
+        res.setMessage(e.getMessage());
+        res.setStatusCode(400);
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(res);
+    }
+
+
+    @ExceptionHandler(value = {
             BadCredentialsException.class,
             IOException.class
 //            UsernameNotFoundException.class  //no needed

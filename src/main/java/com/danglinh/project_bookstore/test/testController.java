@@ -14,6 +14,7 @@ public class testController {
         return "hello";
     }
 
+
     @GetMapping("/get-avatar")
     public File getAvatar() {
         return new File("D:/fullstack/upload/folder/test.png");

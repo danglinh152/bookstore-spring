@@ -13,18 +13,18 @@ import static com.danglinh.project_bookstore.util.constant.ApiPermitAll.PUBLIC_P
 @Configuration
 public class PermissionInterceptorConfiguration implements WebMvcConfigurer {
     String[] whiteList = {
-//            "/auth/get-account",
-//            "/auth/refresh",
-//            "/auth/activate",
-//            "/auth/get-activate",
-//            "/auth/deactivate",
+            "/auth/get-account",
+            "/auth/refresh",
+            "/auth/activate",
+            "/auth/get-activate",
+            "/auth/deactivate",
 //            "/api/books/**",
 //            "/api/feedbacks/**",
 //            "/api/users?filter=**",
 //            "/api/books/favorite"
-            "/auth/sign-in",
-//            "/auth/sign-out",
-//            "/auth/register",
+//            "/api/books",
+            "/auth/sign-out",
+            "/auth/register",
 //            "/api/book/feedback/givefeedback",
 //            "/api/book/favorite"
 //            "/api/users",

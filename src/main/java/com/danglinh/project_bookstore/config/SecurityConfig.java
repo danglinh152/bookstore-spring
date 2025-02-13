@@ -50,9 +50,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorizeRequests ->
                                 authorizeRequests
-                                        .requestMatchers("/storage/**").permitAll()
+                                        .requestMatchers("/storage/**", "/auth/sign-in", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
-//                                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
+                                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
                                         .requestMatchers(HttpMethod.DELETE, PUBLIC_DELETE_ENDPOINTS).permitAll()
                                         .anyRequest().authenticated()
                 )

@@ -3,7 +3,7 @@ package com.danglinh.project_bookstore.util.constant;
 
 public class ApiPermitAll {
     // Base URL của API
-    public static final String FRONT_END_URL = "http://localhost:3000/";
+    public static final String FRONT_END_URL = "http://localhost:5173/";
 
     // Endpoint cho phương thức GET
     public static final String[] PUBLIC_GET_ENDPOINTS = {

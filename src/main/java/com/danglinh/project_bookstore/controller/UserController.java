@@ -62,7 +62,7 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     @ApiMessage("Delete A User with Id")
-    public ResponseEntity<String> deleteUser(@PathVariable int id) {
+    public ResponseEntity<String> deleteUser(@PathVariable int id) throws IdInvalidException {
         if (userService.deleteUser(id)) {
             return ResponseEntity.status(HttpStatus.OK).body("User with id " + id + " deleted successfully");
         }

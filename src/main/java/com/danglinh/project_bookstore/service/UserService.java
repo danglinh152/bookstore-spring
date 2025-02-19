@@ -3,10 +3,13 @@ package com.danglinh.project_bookstore.service;
 
 import com.danglinh.project_bookstore.domain.DTO.response.Meta;
 import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
+import com.danglinh.project_bookstore.domain.entity.Role;
 import com.danglinh.project_bookstore.domain.entity.User;
+import com.danglinh.project_bookstore.repository.RoleRepository;
 import com.danglinh.project_bookstore.repository.UserRepository;
 import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import com.danglinh.project_bookstore.util.error.UserCreationException;
+import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,12 +24,12 @@ import java.util.Optional;
 public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleService roleService) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleRepository roleRepository, SecurityUtil securityUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.roleService = roleService;
+        this.roleRepository = roleRepository;
     }
 
     public User findUserById(int id) throws IdInvalidException {
@@ -62,10 +65,12 @@ public class UserService {
         if (userRepository.existsByUsername(user.getUsername())) {
             errorMessages.add("Username already exists.");
         }
-        if (roleService.findRoleById(user.getRole().getRoleId()) == null || user.getRole() == null) {
-            user.setRole(null);
+
+        Optional<Role> role = roleRepository.findById(user.getRole().getRoleId());
+        if (role.isPresent()) {
+            user.setRole(role.get());
         } else {
-            user.setRole(roleService.findRoleById(user.getRole().getRoleId()));
+            user.setRole(null);
         }
 
         if (!errorMessages.isEmpty()) {
@@ -76,15 +81,44 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        Optional<User> currentUser = userRepository.findById(user.getUserId());
+        if (currentUser.isPresent()) {
+            User existingUser = currentUser.get();
+            existingUser.setUsername(user.getUsername());
+            existingUser.setEmail(user.getEmail());
+            // Removed the password update line
+            Optional<Role> role = roleRepository.findById(user.getRole().getRoleId());
+            if (role.isPresent()) {
+                existingUser.setRole(role.get());
+            } else {
+                existingUser.setRole(null);
+            }
+            existingUser.setActivate(user.getActivate());
+            existingUser.setActivateCode(user.getActivateCode());
+            existingUser.setRefreshToken(user.getRefreshToken());
+            existingUser.setAvatar(user.getAvatar());
+            existingUser.setBuyingAddress(user.getBuyingAddress());
+            existingUser.setShippingAddress(user.getShippingAddress());
+            existingUser.setPhoneNumber(user.getPhoneNumber());
+            existingUser.setFirstName(user.getFirstName());
+            existingUser.setLastName(user.getLastName());
+            existingUser.setGender(user.getGender());
+            return userRepository.save(existingUser);
+        }
+        return null;
     }
 
-    public Boolean deleteUser(int id) {
+
+    public Boolean deleteUser(int id) throws IdInvalidException {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
-            userRepository.delete(user.get());
-            return true;
+            String username = SecurityUtil.getCurrentUser().orElse(null);
+            if (username != null && username.equals(user.get().getUsername())) {
+                userRepository.delete(user.get());
+                return true;
+            } else {
+                throw new IdInvalidException("You can't delete yourself :)");
+            }
         }
         return false;
     }

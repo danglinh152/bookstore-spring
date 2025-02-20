@@ -110,18 +110,27 @@ public class UserService {
 
 
     public Boolean deleteUser(int id) throws IdInvalidException {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            String username = SecurityUtil.getCurrentUser().orElse(null);
-            if (username != null && username.equals(user.get().getUsername())) {
-                userRepository.delete(user.get());
-                return true;
-            } else {
-                throw new IdInvalidException("You can't delete yourself :)");
-            }
+        // Find the user by ID
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        // Check if user exists
+        if (optionalUser.isEmpty()) {
+            return false; // User not found
         }
-        return false;
+
+        User user = optionalUser.get();
+        String currentUsername = SecurityUtil.getCurrentUser().orElse(null);
+
+        // Check if the current user is trying to delete themselves
+        if (currentUsername != null && currentUsername.equals(user.getUsername())) {
+            throw new IdInvalidException("You can't delete yourself :)");
+        }
+
+        // Delete the user
+        userRepository.delete(user);
+        return true; // User deleted successfully
     }
+
 
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username);

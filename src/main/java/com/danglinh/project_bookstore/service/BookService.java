@@ -47,7 +47,22 @@ public class BookService {
     }
 
     public Book updateBook(Book book) {
-        return bookRepository.save(book);
+        Optional<Book> currentBook = bookRepository.findById(book.getBookId());
+        if (currentBook.isPresent()) {
+            Book existingBook = currentBook.get();
+            existingBook.setTitle(book.getTitle());
+            existingBook.setAuthor(book.getAuthor());
+            existingBook.setAvgRate(book.getAvgRate());
+            existingBook.setDescription(book.getDescription());
+            existingBook.setDescriptionDetails(book.getDescriptionDetails());
+            existingBook.setInfoDetails(book.getInfoDetails());
+            existingBook.setIsbn(book.getIsbn());
+            existingBook.setListPrice(book.getListPrice());
+            existingBook.setSellingPrice(book.getSellingPrice());
+            existingBook.setQuantity(book.getQuantity());
+            return bookRepository.save(book);
+        }
+        return null;
     }
 
     public Boolean deleteBook(int id) {

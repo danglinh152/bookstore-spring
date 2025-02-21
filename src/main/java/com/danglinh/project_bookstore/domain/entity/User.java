@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import com.danglinh.project_bookstore.util.constant.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -20,7 +21,6 @@ public class User {
     private int userId;
 
     @Column(name = "avatar", columnDefinition = "LONGTEXT")
-    @Lob
     private String avatar; //
 
     @Column(name = "first_name")
@@ -72,30 +72,20 @@ public class User {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private List<Feedback> listOfFeedback;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private List<Favorite> listOfFavorite;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @ManyToOne()
     @JoinColumn(name = "role_id")
     @JsonIgnoreProperties("listOfUser")
     private Role role;
 
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @OneToMany(mappedBy = "user")
     private List<Order> listOfOrder;
 
     @PrePersist

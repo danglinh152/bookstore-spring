@@ -3,7 +3,9 @@ package com.danglinh.project_bookstore.domain.entity;
 import java.time.Instant;
 import java.util.List;
 
+import com.danglinh.project_bookstore.util.constant.Status;
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -37,6 +39,10 @@ public class Order {
     @Column(name = "total")
     private double total;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.PENDING;
+
     @Column(name = "created_at")
     private Instant createdAt;
 
@@ -49,39 +55,23 @@ public class Order {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @OneToMany(mappedBy = "order")
+    @JsonIgnoreProperties({"order", "book"})
     private List<OrderDetails> listOfOrderdetails;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"listOfFeedback", "listOfFavorite", "listOfOrder", "role"})
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @ManyToOne()
     @JoinColumn(name = "payment_id", nullable = false)
+    @JsonIgnoreProperties("listOfOrder")
     private Payment payment;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @ManyToOne()
     @JoinColumn(name = "delivery_id", nullable = false)
+    @JsonIgnoreProperties("listOfOrder")
     private Delivery delivery;
 
     @PrePersist

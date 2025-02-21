@@ -2,6 +2,7 @@ package com.danglinh.project_bookstore.domain.entity;
 
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -22,6 +23,9 @@ public class Book {
     @Column(name = "title", length = 256)
     @NotBlank(message = "title cannot be blank!")
     private String title;
+
+    @Column(name = "image", columnDefinition = "LONGTEXT")
+    private String image; //
 
     @Column(name = "author", length = 512)
     private String author;
@@ -64,29 +68,30 @@ public class Book {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany()
     @JoinTable(name = "book_genre",
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "genre_id")})
+    @JsonIgnoreProperties("listOfBook")
     private List<Genre> listOfGenre;
 
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book")
+    @JsonIgnoreProperties("book")
     private List<Image> listOfImage;
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book")
+    @JsonIgnoreProperties({"book", "user"})
     private List<Feedback> listOfFeedback;
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @OneToMany(mappedBy = "book")
+    @JsonIgnoreProperties({"book", "user", "order"})
     private List<OrderDetails> listOfOrderdetails;
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "book")
+    @JsonIgnoreProperties({"book", "user"})
     private List<Favorite> listOfFavorite;
+
 
     @PrePersist
     public void beforeCreate() {

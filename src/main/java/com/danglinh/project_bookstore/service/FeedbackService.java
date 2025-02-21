@@ -51,7 +51,14 @@ public class FeedbackService {
     }
 
     public Feedback updateFeedback(Feedback feedback) {
-        return feedbackRepository.save(feedback);
+        Optional<Feedback> currentFeedback = feedbackRepository.findById(feedback.getFeedbackId());
+        if (currentFeedback.isPresent()) {
+            Feedback existingFeedback = currentFeedback.get();
+            existingFeedback.setFeedback(feedback.getFeedback());
+            existingFeedback.setRate(feedback.getRate());
+            return feedbackRepository.save(existingFeedback);
+        }
+        return null;
     }
 
     public Boolean deleteFeedback(int id) {

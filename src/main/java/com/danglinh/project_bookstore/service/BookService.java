@@ -60,10 +60,12 @@ public class BookService {
             existingBook.setListPrice(book.getListPrice());
             existingBook.setSellingPrice(book.getSellingPrice());
             existingBook.setQuantity(book.getQuantity());
-            return bookRepository.save(book);
+
+            return bookRepository.save(existingBook);
         }
         return null;
     }
+
 
     public Boolean deleteBook(int id) {
         Optional<Book> book = bookRepository.findById(id);

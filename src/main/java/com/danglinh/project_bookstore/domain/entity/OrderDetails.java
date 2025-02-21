@@ -1,6 +1,7 @@
 package com.danglinh.project_bookstore.domain.entity;
 
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -33,23 +34,14 @@ public class OrderDetails {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @ManyToOne()
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonIgnoreProperties({"user", "order", "listOfOrderdetails"})
     private Order order;
 
-    @ManyToOne(
-            fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH}
-    )
+    @ManyToOne()
     @JoinColumn(name = "book_id", nullable = false)
+    @JsonIgnoreProperties({"listOfFeedback", "listOfOrderdetails", "listOfGenre", "listOfImage", "listOfFavorite"})
     private Book book;
 
     @PrePersist

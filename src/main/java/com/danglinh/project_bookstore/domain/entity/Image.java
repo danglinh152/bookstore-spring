@@ -42,17 +42,9 @@ public class Image {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @JsonIgnoreProperties("listOfImage")
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.DETACH,
-                    CascadeType.REFRESH
-            }
-    )
+    @ManyToOne()
     @JoinColumn(name = "book_id")
+    @JsonIgnoreProperties({"listOfFeedback", "listOfOrderdetails", "listOfGenre", "listOfImage", "listOfFavorite"})
     private Book book;
 
     @PrePersist

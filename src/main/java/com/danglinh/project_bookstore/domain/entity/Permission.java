@@ -45,8 +45,8 @@ public class Permission {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "listOfPermissions")
-    @JsonIgnoreProperties("listOfPermissions")
+    @ManyToMany(mappedBy = "listOfPermissions")
+    @JsonIgnoreProperties({"listOfPermissions", "listOfUser"})
     private List<Role> listOfRoles;
 
 

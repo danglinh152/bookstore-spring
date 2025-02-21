@@ -34,8 +34,8 @@ public class Genre {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "listOfGenre")
-    @JsonIgnoreProperties("listOfGenre")
+    @ManyToMany(mappedBy = "listOfGenre")
+    @JsonIgnoreProperties({"listOfFeedback", "listOfOrderdetails", "listOfGenre", "listOfImage", "listOfFavorite"})
     private List<Book> listOfBook;
 
     @PrePersist

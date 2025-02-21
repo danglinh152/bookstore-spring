@@ -39,19 +39,15 @@ public class Role {
     private String updatedBy;
 
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany()
     @JoinTable(name = "permission_role",
             joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns = {@JoinColumn(name = "permission_id")})
     @JsonIgnoreProperties("listOfRoles")
     private List<Permission> listOfPermissions;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    }, mappedBy = "role")
+    @OneToMany(mappedBy = "role")
+    @JsonIgnoreProperties({"listOfFeedback", "listOfFavorite", "listOfOrder", "role"})
     private List<User> listOfUser;
 
     @PrePersist

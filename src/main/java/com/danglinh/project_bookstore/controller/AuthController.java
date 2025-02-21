@@ -162,6 +162,7 @@ public class AuthController {
         currentUserDTO.setEmail(currentUser.getEmail());
         currentUserDTO.setFirstName(currentUser.getFirstName());
         currentUserDTO.setLastName(currentUser.getLastName());
+        currentUserDTO.setAvatar(currentUser.getAvatar());
 
         return ResponseEntity.ok(currentUserDTO);
     }

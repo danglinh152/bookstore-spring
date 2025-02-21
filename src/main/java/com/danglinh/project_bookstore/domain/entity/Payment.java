@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.danglinh.project_bookstore.util.security.SecurityUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -37,12 +38,8 @@ public class Payment {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    @OneToMany(mappedBy = "payment", fetch = FetchType.LAZY, cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH
-    })
+    @OneToMany(mappedBy = "payment")
+    @JsonIgnore
     private List<Order> listOfOrder;
 
     @PrePersist

@@ -35,8 +35,10 @@ public class Genre {
     private String updatedBy;
 
     @ManyToMany(mappedBy = "listOfGenre")
-    @JsonIgnoreProperties({"listOfFeedback", "listOfOrderdetails", "listOfGenre", "listOfImage", "listOfFavorite"})
+//    @JsonIgnoreProperties({"listOfFeedback", "listOfOrderdetails", "listOfGenre", "listOfImage", "listOfFavorite", "description", "infoDetails"})
+    @JsonIgnore
     private List<Book> listOfBook;
+
 
     @PrePersist
     public void beforeCreate() {

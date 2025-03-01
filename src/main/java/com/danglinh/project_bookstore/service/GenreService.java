@@ -28,6 +28,7 @@ public class GenreService {
         return genre.orElse(null);
     }
 
+
     public ResponsePaginationDTO findAllGenres(Specification<Genre> spec, Pageable pageable) {
         Page<Genre> pageGenre = genreRepository.findAll(spec, pageable);
         Meta meta = new Meta();

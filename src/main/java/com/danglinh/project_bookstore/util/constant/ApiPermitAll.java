@@ -26,6 +26,8 @@ public class ApiPermitAll {
             "/auth/sign-in",
             "/auth/sign-out",
             "/auth/register",
+            "/auth/forgot-passwd",
+            "/auth/verify-otp"
 //            "/api/book/feedback/givefeedback",
 //            "/api/book/favorite"
     };

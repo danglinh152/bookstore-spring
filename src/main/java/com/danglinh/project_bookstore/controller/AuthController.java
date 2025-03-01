@@ -4,6 +4,7 @@ package com.danglinh.project_bookstore.controller;
 import com.danglinh.project_bookstore.domain.DTO.request.LoginDTO;
 import com.danglinh.project_bookstore.domain.DTO.response.ActivateDTO;
 import com.danglinh.project_bookstore.domain.DTO.response.CurrentUserDTO;
+import com.danglinh.project_bookstore.domain.DTO.response.ForgotPasswd;
 import com.danglinh.project_bookstore.domain.DTO.response.ResLoginDTO;
 import com.danglinh.project_bookstore.domain.entity.User;
 import com.danglinh.project_bookstore.service.EmailService;
@@ -22,10 +23,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Random;
 
 
@@ -37,15 +40,17 @@ public class AuthController {
     private final SecurityUtil securityUtil;
     private final UserService userService;
     private final EmailService emailService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Value("${danglinh.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenValidityInSeconds;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, EmailService emailService, BCryptPasswordEncoder passwordEncoder) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -215,4 +220,75 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.OK).body("Activate Success!");
         }
     }
+
+    @PostMapping("/forgot-passwd")
+    @ApiMessage("Get OTP")
+    public ResponseEntity<ForgotPasswd> getOTP(@RequestParam String email) throws IdInvalidException {
+        User currentUser = userService.findUserByEmail(email);
+
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(6);
+
+        for (int i = 0; i < 6; i++) {
+            int digit = random.nextInt(10); // Tạo số từ 0 đến 9
+            sb.append(digit);
+        }
+        String otp = sb.toString();
+        Instant exp = Instant.now().plusSeconds(60);
+
+        currentUser.setOtp(otp);
+        currentUser.setOtpExp(exp);
+        userService.updateUser(currentUser);
+
+        ForgotPasswd forgotPasswd = new ForgotPasswd(otp, exp);
+
+
+        try {
+            emailService.send("storetenpm@gmail.com", email, "YOUR OTP", otp);
+            return ResponseEntity.status(HttpStatus.OK).body(forgotPasswd);
+        } catch (IdInvalidException e) {
+            throw new IdInvalidException("Can not send email!");
+        }
+    }
+
+    @PostMapping("/verify-otp")
+    @ApiMessage("Verify OTP and update password")
+    public ResponseEntity<String> verifyOtp(@RequestParam String email, @RequestParam String otp) throws IdInvalidException {
+        User currentUser = userService.findUserByEmail(email);
+
+        // Kiểm tra xem OTP có hợp lệ không
+        if (currentUser.getOtp() == null || !currentUser.getOtp().equals(otp)) {
+            throw new IdInvalidException("Invalid OTP!");
+        }
+
+        // Kiểm tra thời gian hết hạn của OTP
+        Instant now = Instant.now();
+        if (currentUser.getOtpExp().isBefore(now)) {
+            throw new IdInvalidException("OTP has expired!");
+        }
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(6);
+        for (int i = 0; i < 6; i++) {
+            int digit = random.nextInt(10); // Tạo số từ 0 đến 9
+            sb.append(digit);
+        }
+        String newPassword = sb.toString();
+        // Cập nhật mật khẩu mới
+        currentUser.setPassword(passwordEncoder.encode(newPassword)); // Đảm bảo rằng mật khẩu được mã hóa trước khi lưu
+        userService.updateUser(currentUser);
+
+        // Xóa OTP sau khi đã xác minh
+        currentUser.setOtp(null);
+        currentUser.setOtpExp(null);
+        userService.updateUser(currentUser);
+
+        try {
+            emailService.send("storetenpm@gmail.com", email, "YOUR new password:", newPassword);
+            return ResponseEntity.status(HttpStatus.OK).body("ok");
+        } catch (IdInvalidException e) {
+            throw new IdInvalidException("Can not send email!");
+        }
+
+    }
+
 }

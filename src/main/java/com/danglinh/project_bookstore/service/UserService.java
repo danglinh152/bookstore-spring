@@ -40,6 +40,14 @@ public class UserService {
         throw new IdInvalidException("User Not Found");
     }
 
+    public User findUserByEmail(String email) throws IdInvalidException {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            return user.get();
+        }
+        throw new IdInvalidException("User Not Found");
+    }
+
     public ResponsePaginationDTO findAllUsers(Specification<User> spec, Pageable pageable) {
         Page<User> pageUser = userRepository.findAll(spec, pageable);
         Meta meta = new Meta();

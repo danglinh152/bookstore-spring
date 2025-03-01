@@ -61,6 +61,12 @@ public class User {
     @Column(name = "activate_code")
     private String activateCode;
 
+    @Column(name = "otp")
+    private String otp;
+
+    @Column(name = "otp_exp")
+    private Instant otpExp;
+
     @Column(name = "created_at")
     private Instant createdAt;
 

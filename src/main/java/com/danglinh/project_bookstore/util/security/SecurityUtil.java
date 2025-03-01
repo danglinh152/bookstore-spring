@@ -2,7 +2,10 @@ package com.danglinh.project_bookstore.util.security;
 
 
 import com.danglinh.project_bookstore.domain.DTO.response.ResLoginDTO;
+import com.danglinh.project_bookstore.domain.entity.Permission;
+import com.danglinh.project_bookstore.domain.entity.Role;
 import com.danglinh.project_bookstore.domain.entity.User;
+import com.danglinh.project_bookstore.service.RoleService;
 import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +20,10 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,6 +31,7 @@ public class SecurityUtil {
 
     private final JwtEncoder jwtEncoder;
     public final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
+    private final RoleService roleService;
 
 
     @Value("${danglinh.jwt.base64-secret}")
@@ -37,8 +43,9 @@ public class SecurityUtil {
     @Value("${danglinh.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenValidityInSeconds;
 
-    public SecurityUtil(JwtEncoder jwtEncoder) {
+    public SecurityUtil(JwtEncoder jwtEncoder, RoleService roleService) {
         this.jwtEncoder = jwtEncoder;
+        this.roleService = roleService;
     }
 
 
@@ -46,10 +53,12 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant expiresAt = now.plusSeconds(accessTokenValidityInSeconds);
 
+        String authority = user.getRole().getRoleName();
+
+
         JwtClaimsSet claims = JwtClaimsSet.builder().issuedAt(now)
                 .expiresAt(expiresAt)
-                .claim("infoAccessToken", user.getUsername())
-
+                .claim("authorities", authority)
                 .subject(user.getUsername())
                 .build();
 

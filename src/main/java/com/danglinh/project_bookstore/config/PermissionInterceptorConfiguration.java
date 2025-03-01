@@ -18,8 +18,8 @@ public class PermissionInterceptorConfiguration implements WebMvcConfigurer {
             "/auth/activate",
             "/auth/get-activate",
             "/auth/deactivate",
-//            "/api/books/**",
-//            "/api/feedbacks/**",
+            "/api/books/**",
+            "/api/feedbacks/**",
 //            "/api/users?filter=**",
 //            "/api/books/favorite"
 //            "/api/books",

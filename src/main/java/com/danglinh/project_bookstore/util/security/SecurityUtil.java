@@ -59,6 +59,7 @@ public class SecurityUtil {
         JwtClaimsSet claims = JwtClaimsSet.builder().issuedAt(now)
                 .expiresAt(expiresAt)
                 .claim("authorities", authority)
+                .claim("userId", user.getUserId())
                 .subject(user.getUsername())
                 .build();
 
@@ -77,9 +78,12 @@ public class SecurityUtil {
         userLogin.setFirstName(user.getFirstName());
         userLogin.setLastName(user.getLastName());
 
+        String authority = user.getRole().getRoleName();
+
         JwtClaimsSet claims = JwtClaimsSet.builder().issuedAt(now)
                 .expiresAt(expiresAt)
-                .claim("infoRefreshToken", userLogin)
+                .claim("authorities", authority)
+                .claim("userId", user.getUserId())
                 .subject(user.getUsername())
                 .build();
 

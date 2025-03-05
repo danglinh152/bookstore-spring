@@ -101,6 +101,7 @@ public class UserService {
             } else {
                 existingUser.setRole(null);
             }
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
             existingUser.setActivate(user.getActivate());
             existingUser.setActivateCode(user.getActivateCode());
             existingUser.setRefreshToken(user.getRefreshToken());

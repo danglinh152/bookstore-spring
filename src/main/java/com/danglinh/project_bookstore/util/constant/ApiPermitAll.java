@@ -17,7 +17,7 @@ public class ApiPermitAll {
             "/api/users?filter=**",
             "api/books",
             "api/genres",
-            "/api/genres/**"
+            "/api/genres/**",
 //            "/api/books/favorite"
     };
 

@@ -91,6 +91,11 @@ public class User {
     @JsonIgnoreProperties("listOfUser")
     private Role role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)  // Ensure mappedBy is set to "user"
+    private Cart cart;
+
+
+
 
     @OneToMany(mappedBy = "user")
     private List<Order> listOfOrder;

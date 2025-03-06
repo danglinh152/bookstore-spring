@@ -92,6 +92,10 @@ public class Book {
     @JsonIgnoreProperties({"book", "user"})
     private List<Favorite> listOfFavorite;
 
+    @OneToMany(mappedBy = "book")
+    @JsonIgnoreProperties({"book", "user", "cart"})
+    private List<CartDetails> listOfCartdetails;
+
 
     @PrePersist
     public void beforeCreate() {

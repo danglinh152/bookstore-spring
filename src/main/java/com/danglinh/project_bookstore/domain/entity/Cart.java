@@ -16,7 +16,7 @@ public class Cart {
     private int cartId;
 
     @OneToMany(mappedBy = "cart")
-    @JsonIgnoreProperties({"cart", "book"})
+    @JsonIgnoreProperties({"cart"})
     private List<CartDetails> listOfCartdetails;
 
     @OneToOne

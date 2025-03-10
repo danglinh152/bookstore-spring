@@ -2,6 +2,7 @@ package com.danglinh.project_bookstore.controller;
 
 
 import com.danglinh.project_bookstore.domain.DTO.request.AddToCartDTO;
+import com.danglinh.project_bookstore.domain.DTO.request.CheckOutDTO;
 import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
 import com.danglinh.project_bookstore.domain.entity.Book;
 import com.danglinh.project_bookstore.domain.entity.Cart;
@@ -116,6 +117,34 @@ public class CartController {
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(cart);
+    }
+
+    @PostMapping("/check-out")
+    @ApiMessage("Check Out")
+    public ResponseEntity<String> checkOut(@RequestBody CheckOutDTO checkOutDTO) throws IdInvalidException {
+        User user = userService.findUserById(checkOutDTO.getUserId());
+        Cart cart = cartService.findByUser(user);
+        Book book = bookService.findBookById(checkOutDTO.getBookId());
+        if (book == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        CartDetails cartDetails = cartDetailsService.findByCartAndBook(cart, book);
+        if (cartDetails == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Chưa có sản phẩm trong giỏ hàng");
+        } else {
+            // Update existing cart details
+            if (cartDetails.getQuantity() - checkOutDTO.getQuantity() < 0) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Số lượng thanh toán nhiều hơn trong giỏ hàng");
+            }
+            cartDetails.setQuantity(cartDetails.getQuantity() - checkOutDTO.getQuantity());
+            if (cartDetails.getQuantity() == 0) {
+                cartDetailsService.deleteCartDetails(cartDetails.getCartDetailsId());
+            } else {
+                cartDetailsService.updateCartDetails(cartDetails);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Thanh Toán thành công!");
     }
 
 

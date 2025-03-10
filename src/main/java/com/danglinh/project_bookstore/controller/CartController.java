@@ -1,10 +1,16 @@
 package com.danglinh.project_bookstore.controller;
 
 
+import com.danglinh.project_bookstore.domain.DTO.request.AddToCartDTO;
 import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
 import com.danglinh.project_bookstore.domain.entity.Book;
 import com.danglinh.project_bookstore.domain.entity.Cart;
+import com.danglinh.project_bookstore.domain.entity.CartDetails;
+import com.danglinh.project_bookstore.domain.entity.User;
+import com.danglinh.project_bookstore.service.BookService;
+import com.danglinh.project_bookstore.service.CartDetailsService;
 import com.danglinh.project_bookstore.service.CartService;
+import com.danglinh.project_bookstore.service.UserService;
 import com.danglinh.project_bookstore.util.annotation.ApiMessage;
 import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import com.turkraft.springfilter.boot.Filter;
@@ -19,10 +25,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 public class CartController {
+    private final UserService userService;
+    private final CartDetailsService cartDetailsService;
+    private final BookService bookService;
     private CartService cartService;
 
-    public CartController(CartService cartService) {
+    public CartController(CartService cartService, UserService userService, CartDetailsService cartDetailsService, BookService bookService) {
         this.cartService = cartService;
+        this.userService = userService;
+        this.cartDetailsService = cartDetailsService;
+        this.bookService = bookService;
     }
 
     @GetMapping("/carts")
@@ -48,7 +60,7 @@ public class CartController {
 
     @PostMapping("/carts")
     @ApiMessage("Create A Cart")
-    public ResponseEntity<Cart> createCart(@Valid @RequestBody Cart cart) {
+    public ResponseEntity<Cart> createCart(@RequestBody Cart cart) {
         if (cartService.addCart(cart) == null) {
             return ResponseEntity.internalServerError().build();
         }
@@ -57,7 +69,7 @@ public class CartController {
 
     @PutMapping("/carts")
     @ApiMessage("Update A Cart")
-    public ResponseEntity<Cart> updateCart(@Valid @RequestBody Cart cart) {
+    public ResponseEntity<Cart> updateCart(@RequestBody Cart cart) {
         if (cartService.updateCart(cart) == null) {
             return ResponseEntity.internalServerError().build();
         }
@@ -72,5 +84,39 @@ public class CartController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+    @PostMapping("/add-to-cart")
+    @ApiMessage("Add To Cart")
+    public ResponseEntity<Cart> addToCart(@RequestBody AddToCartDTO addToCartDTO) throws IdInvalidException {
+        User user = userService.findUserById(addToCartDTO.getUserId());
+        Cart cart = cartService.findByUser(user);
+
+        if (cart == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        } else {
+            Book book = bookService.findBookById(addToCartDTO.getBookId());
+
+            if (book == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            CartDetails cartDetails = cartDetailsService.findByCartAndBook(cart, book);
+
+            if (cartDetails == null) {
+                // Create new cart details
+                cartDetails = new CartDetails();
+                cartDetails.setCart(cart);
+                cartDetails.setBook(book);
+                cartDetails.setQuantity(1); // Set initial quantity to 1
+                cartDetailsService.addCartDetails(cartDetails);
+            } else {
+                // Update existing cart details
+                cartDetails.setQuantity(cartDetails.getQuantity() + 1);
+                cartDetailsService.updateCartDetails(cartDetails);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(cart);
+    }
+
 
 }

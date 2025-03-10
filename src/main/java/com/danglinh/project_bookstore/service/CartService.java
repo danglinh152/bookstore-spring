@@ -60,4 +60,10 @@ public class CartService {
         return false;
     }
 
+    public Cart findByUser(User user) {
+        Optional<Cart> cart = cartRepository.findByUser(user);
+        return cart.orElse(null);
+
+    }
+
 }

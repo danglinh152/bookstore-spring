@@ -4,6 +4,7 @@ package com.danglinh.project_bookstore.service;
 import com.danglinh.project_bookstore.domain.DTO.response.Meta;
 import com.danglinh.project_bookstore.domain.DTO.response.ResponsePaginationDTO;
 import com.danglinh.project_bookstore.domain.entity.Book;
+import com.danglinh.project_bookstore.domain.entity.Cart;
 import com.danglinh.project_bookstore.domain.entity.CartDetails;
 import com.danglinh.project_bookstore.domain.entity.User;
 import com.danglinh.project_bookstore.repository.CartDetailsRepository;
@@ -58,6 +59,11 @@ public class CartDetailsService {
             return true;
         }
         return false;
+    }
+
+    public CartDetails findByCartAndBook(Cart cart, Book book) {
+        Optional<CartDetails> cartDetails = cartDetailsRepository.findByCartAndBook(cart, book);
+        return cartDetails.orElse(null);
     }
 
 }

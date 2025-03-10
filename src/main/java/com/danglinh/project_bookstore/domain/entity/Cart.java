@@ -21,5 +21,6 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id")  // Add this line to reference the user
+    @JsonIgnoreProperties({"listOfFeedback", "listOfFavorite", "listOfOrder", "role", "cart"})
     private User user;
 }

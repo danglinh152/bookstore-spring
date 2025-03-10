@@ -48,7 +48,7 @@ public class CartDetailsController {
 
     @PostMapping("/cart-details")
     @ApiMessage("Create A CartDetails")
-    public ResponseEntity<CartDetails> createCartDetails(@Valid @RequestBody CartDetails cartDetails) {
+    public ResponseEntity<CartDetails> createCartDetails(@RequestBody CartDetails cartDetails) {
         if (cartDetailsService.addCartDetails(cartDetails) == null) {
             return ResponseEntity.internalServerError().build();
         }
@@ -57,7 +57,7 @@ public class CartDetailsController {
 
     @PutMapping("/cart-details")
     @ApiMessage("Update A CartDetails")
-    public ResponseEntity<CartDetails> updateCartDetails(@Valid @RequestBody CartDetails cartDetails) {
+    public ResponseEntity<CartDetails> updateCartDetails(@RequestBody CartDetails cartDetails) {
         if (cartDetailsService.updateCartDetails(cartDetails) == null) {
             return ResponseEntity.internalServerError().build();
         }

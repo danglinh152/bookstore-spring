@@ -6,9 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class VNPayOrder {
+@NoArgsConstructor
+public class ZaloPayOrder {
     private String orderInfo;
     private Long amount;
 }

@@ -1,11 +1,15 @@
 package com.danglinh.project_bookstore.service;
 
 
+import com.danglinh.project_bookstore.domain.DTO.request.MomoOrder;
+import com.danglinh.project_bookstore.domain.DTO.response.PaymentUrl;
+import com.danglinh.project_bookstore.util.error.IdInvalidException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -14,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -25,21 +30,22 @@ public class MomoService {
     private static final String SECRET_KEY = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
     private static final String REDIRECT_URL = "https://momo.vn/return";
     private static final String IPN_URL = "https://callback.url/notify";
-    // private static final String REQUEST_TYPE = "captureWallet";
-    private static final String REQUEST_TYPE = "payWithMethod";
+    private static final String REQUEST_TYPE = "captureWallet";
+//    private static final String REQUEST_TYPE = "payWithMethod";
 
-    public String createPaymentRequest(String amount) {
+
+    public String createPaymentRequest(MomoOrder momoOrder) throws IdInvalidException {
         try {
             // Generate requestId and orderId
             String requestId = PARTNER_CODE + new Date().getTime();
             String orderId = requestId;
-            String orderInfo = "SN Mobile";
+            String orderInfo = "S10.07 Bookstore\nThong tin dat hang: " + momoOrder.getOrderInfo();
             String extraData = "";
 
             // Generate raw signature
             String rawSignature = String.format(
                     "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
-                    ACCESS_KEY, amount, extraData, IPN_URL, orderId, orderInfo, PARTNER_CODE, REDIRECT_URL,
+                    ACCESS_KEY, momoOrder.getAmount(), extraData, IPN_URL, orderId, orderInfo, PARTNER_CODE, REDIRECT_URL,
                     requestId, REQUEST_TYPE);
 
             // Sign with HMAC SHA256
@@ -50,7 +56,7 @@ public class MomoService {
             requestBody.put("partnerCode", PARTNER_CODE);
             requestBody.put("accessKey", ACCESS_KEY);
             requestBody.put("requestId", requestId);
-            requestBody.put("amount", amount);
+            requestBody.put("amount", momoOrder.getAmount());
             requestBody.put("orderId", orderId);
             requestBody.put("orderInfo", orderInfo);
             requestBody.put("redirectUrl", REDIRECT_URL);
@@ -74,13 +80,17 @@ public class MomoService {
                     result.append(line);
                 }
                 System.out.println("Response from MoMo: " + result.toString());
-                return result.toString();
+
+                // Parse the response to get payUrl
+                JSONObject jsonResponse = new JSONObject(result.toString());
+                return jsonResponse.getString("payUrl");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"error\": \"Failed to create payment request: " + e.getMessage() + "\"}";
+            throw new IdInvalidException("Giao Dich Khong Thanh Cong");
         }
     }
+
 
     // HMAC SHA256 signing method
     private static String signHmacSHA256(String data, String key) throws Exception {

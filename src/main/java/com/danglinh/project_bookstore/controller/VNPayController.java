@@ -24,7 +24,7 @@ public class VNPayController {
     }
 
     @PostMapping("/vnpay")
-    public ResponseEntity<PaymentUrl> vnpay(HttpServletRequest request,@RequestBody VNPayOrder vnPayOrder) {
+    public ResponseEntity<PaymentUrl> vnpay(HttpServletRequest request, @RequestBody VNPayOrder vnPayOrder) {
 //        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String vnpayUrl = vnPayService.createOrder(request, Integer.parseInt(vnPayOrder.getAmount().toString()), vnPayOrder.getOrderInfo(), vnp_Returnurl);
 

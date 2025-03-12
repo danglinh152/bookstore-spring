@@ -15,6 +15,7 @@ public class ZaloPayConfig {
             put("key2", "trMrHtvjo6myautxDUiAcYsVtaeQ8nhf");
             put("endpoint", "https://sb-openapi.zalopay.vn/v2/create");
             put("orderstatus", "https://sb-openapi.zalopay.vn/v2/query");
+            put("callback_url", "http://localhost:5173/check-out");
 
         }
     };

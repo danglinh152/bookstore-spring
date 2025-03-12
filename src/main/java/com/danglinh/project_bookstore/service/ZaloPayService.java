@@ -2,6 +2,7 @@ package com.danglinh.project_bookstore.service;
 
 import com.danglinh.project_bookstore.config.ZaloPayConfig;
 import com.danglinh.project_bookstore.domain.DTO.request.ZaloPayOrder;
+import com.danglinh.project_bookstore.domain.DTO.response.PaymentUrl;
 import com.danglinh.project_bookstore.util.vn.zalopay.crypto.HMACUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -10,6 +11,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 
@@ -28,13 +30,14 @@ public class ZaloPayService {
         return fmt.format(cal.getTimeInMillis());
     }
 
-    public String createOrder(ZaloPayOrder zaloPayOrder) {
+    public PaymentUrl createOrder(ZaloPayOrder zaloPayOrder) {
         Random rand = new Random();
         int randomId = rand.nextInt(1000000);
 
-
+        // Check if the order amount is null
         if (zaloPayOrder.getAmount() == null) {
-            return "{\"error\": \"Amount is required\"}";
+            System.err.println("Order amount is null.");
+            return null;
         }
 
         Map<String, Object> order = new HashMap<>();
@@ -47,16 +50,24 @@ public class ZaloPayService {
         order.put("bank_code", "");
         order.put("item", "[{}]");
         order.put("embed_data", "{}");
-        order.put("callback_url",
-                "https://9cbc-2405-4803-c860-45d0-a9ba-5d84-9e59-fb4b.ngrok-free.app/api/zalopay/callback");
+        order.put("callback_url", ZaloPayConfig.config.get("callback_url"));
 
-        String data = order.get("app_id") + "|" + order.get("app_trans_id") + "|" + order.get("app_user") + "|"
-                + order.get("amount") + "|" + order.get("app_time") + "|" + order.get("embed_data") + "|"
-                + order.get("item");
+        // Prepare data for HMAC
+        String data = String.join("|",
+                order.get("app_id").toString(),
+                order.get("app_trans_id").toString(),
+                order.get("app_user").toString(),
+                order.get("amount").toString(),
+                order.get("app_time").toString(),
+                order.get("embed_data").toString(),
+                order.get("item").toString()
+        );
 
+        System.out.println("Data for HMAC: " + data);
+
+        // Generate HMAC
         String mac = HMACUtil.HMacHexStringEncode(HMACUtil.HMACSHA256, ZaloPayConfig.config.get("key1"), data);
         order.put("mac", mac);
-
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpPost post = new HttpPost(ZaloPayConfig.config.get("endpoint"));
@@ -69,21 +80,36 @@ public class ZaloPayService {
             post.setEntity(new UrlEncodedFormEntity(params));
 
             try (CloseableHttpResponse response = client.execute(post)) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                StringBuilder resultJsonStr = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    resultJsonStr.append(line);
+                // Check if the response is successful
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+                    StringBuilder resultJsonStr = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        resultJsonStr.append(line);
+                    }
+
+                    // Parse JSON response
+                    JSONObject jsonResponse = new JSONObject(resultJsonStr.toString());
+
+                    // Check for the "order_url" key
+                    if (jsonResponse.has("order_url")) {
+                        return new PaymentUrl(jsonResponse.getString("order_url"));
+                    } else {
+                        System.err.println("Response does not contain 'order_url': " + jsonResponse.toString());
+                        return null;
+                    }
+                } else {
+                    System.err.println("Failed to create order. HTTP error code: " + response.getStatusLine().getStatusCode());
+                    return null;
                 }
-
-
-                return resultJsonStr.toString();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"error\": \"Failed to create order: " + e.getMessage() + "\"}";
+            return null;
         }
     }
+
 
     public String getOrderStatus(String appTransId) {
         String data = ZaloPayConfig.config.get("app_id") + "|" + appTransId + "|" + ZaloPayConfig.config.get("key1");

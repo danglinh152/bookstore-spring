@@ -28,8 +28,8 @@ public class MomoService {
     private static final String PARTNER_CODE = "MOMO";
     private static final String ACCESS_KEY = "F8BBA842ECF85";
     private static final String SECRET_KEY = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
-    private static final String REDIRECT_URL = "https://momo.vn/return";
-    private static final String IPN_URL = "https://callback.url/notify";
+    private static final String REDIRECT_URL = "http://localhost:5173/check-out-failed";
+//    private static final String IPN_URL = "https://callback.url/notify";
     private static final String REQUEST_TYPE = "captureWallet";
 //    private static final String REQUEST_TYPE = "payWithMethod";
 
@@ -45,7 +45,7 @@ public class MomoService {
             // Generate raw signature
             String rawSignature = String.format(
                     "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
-                    ACCESS_KEY, momoOrder.getAmount(), extraData, IPN_URL, orderId, orderInfo, PARTNER_CODE, REDIRECT_URL,
+                    ACCESS_KEY, momoOrder.getAmount(), extraData, "IPN_URL", orderId, orderInfo, PARTNER_CODE, REDIRECT_URL,
                     requestId, REQUEST_TYPE);
 
             // Sign with HMAC SHA256
@@ -60,7 +60,7 @@ public class MomoService {
             requestBody.put("orderId", orderId);
             requestBody.put("orderInfo", orderInfo);
             requestBody.put("redirectUrl", REDIRECT_URL);
-            requestBody.put("ipnUrl", IPN_URL);
+            requestBody.put("ipnUrl", "IPN_URL");
             requestBody.put("extraData", extraData);
             requestBody.put("requestType", REQUEST_TYPE);
             requestBody.put("signature", signature);
